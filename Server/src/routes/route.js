@@ -5,7 +5,7 @@ const authRouter = require('./auth.route')
 
 module.exports = (app, root, public) => {
   // Endpoints for users
-  app.use("/api/", authRouter)
+  app.use("/api", authRouter)
 
   // Endpoint for content
 
