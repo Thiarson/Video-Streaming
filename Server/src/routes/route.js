@@ -23,31 +23,31 @@ module.exports = (app, root, public) => {
 
   // Endpoint for web client
   app.get("/", (req, res) => {
-    res.sendFile(path.join(public, 'index.html'))
+    res.sendFile(path.join(public, 'client/index.html'))
   });
 
   app.get("/static/js/main.*.js", (req, res) => {
-    res.sendFile(path.join(public, req.url))
+    res.sendFile(path.join(public, `client/${req.url}`))
   });
 
   app.get("/static/js/main.*.js.map", (req, res) => {
-    res.sendFile(path.join(public, req.url))
+    res.sendFile(path.join(public, `client/${req.url}`))
   });
 
   app.get("/static/css/main.*.css", (req, res) => {
-    res.sendFile(path.join(public, req.url))
+    res.sendFile(path.join(public, `client/${req.url}`))
   });
 
   app.get("/static/css/main.*.css.map", (req, res) => {
-    res.sendFile(path.join(public, req.url))
+    res.sendFile(path.join(public, `client/${req.url}`))
   });
 
   app.get("/manifest.json", (req, res) => {
-    res.sendFile(path.join(public, req.url))
+    res.sendFile(path.join(public, `client/${req.url}`))
   });
 
   app.get("/favicon.ico", (req, res) => {
-    const faviconPath = path.join(public, req.url)
+    const faviconPath = path.join(public, `client/${req.url}`)
     const favicon = fs.readFileSync(faviconPath)
     
     res.send(favicon)
@@ -55,7 +55,7 @@ module.exports = (app, root, public) => {
 
   // Redirect to index.html for undefined endpoints
   app.all("*", (req, res) => {
-    res.sendFile(path.join(public, 'index.html'))
+    res.sendFile(path.join(public, 'client/index.html'))
   });
 
   // Error for undefined endpoints
