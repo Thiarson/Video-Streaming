@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt")
 
 const prisma = require("../database/postgre/db")
 const { generateJwtToken } = require("../lib/jwt-server")
+const { loginSchema } = require("../lib/data-validator")
 
 const authService = {}
 
@@ -9,6 +10,17 @@ const authService = {}
  * Verify user for login
  */
 authService.verifyUser = async (userData) => {
+  // Verify user data
+  // const { error } = loginSchema.validate(req.body)
+  const { error } = loginSchema.validate({
+    phone: userData.userPhone,
+    email: userData.userEmail,
+    password: userData.userPassword,
+  })
+
+  if (error)
+    throw new Error("Invalid data")
+
   // Verify user from prisma
   let user = await prisma.userInfo.findMany({
     where: {

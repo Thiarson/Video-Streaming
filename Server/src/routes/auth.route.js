@@ -2,7 +2,6 @@ const { Router } = require("express")
 
 const authService = require("../services/auth.service")
 const auth = require("../middlewares/auth")
-const { loginSchema } = require("../lib/data-validator")
 
 const authRouter = Router()
 
@@ -11,12 +10,6 @@ const authRouter = Router()
  */
 authRouter.post("/login", async function (req, res) {
   try {
-    // Verify user data
-    const { error } = loginSchema.validate(req.body)
-
-    if (error)
-      throw new Error("Invalid data")
-    
     const userData = {
       userPassword: req.body.password
     }
