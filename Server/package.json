@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "videostreaming",
   "version": "0.1.0",
   "description": "Server for the video streaming application",
   "scripts": {

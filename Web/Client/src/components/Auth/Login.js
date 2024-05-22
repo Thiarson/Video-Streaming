@@ -4,6 +4,7 @@ import { VscError } from "react-icons/vsc"
 import { BiError } from "react-icons/bi"
 
 import Field from "../assets/Field"
+import Offline from "../assets/Offline"
 import context from "../utils/context"
 import { inputCheck, showError } from "../utils/form-verif"
 import { useError } from "../utils/hooks"
@@ -20,6 +21,7 @@ function Login() {
   const password = useRef(null)
   const [ inputError, setInputError, resetInputError ] = useError([ "login", "password" ])
   const [ databaseError, setDatabaseError ] = useState(false)
+  const [ isOffline, setIsOffline ] = useState(false)
 
   const dbError = (
     <div className="login-error">
@@ -71,40 +73,49 @@ function Login() {
     if (loginData === null)
       return
 
-    const { success, data, token } = await fetchServer.post(serverUrl, { body: loginData })
+    try {
+      const { success, data, token } = await fetchServer.post(serverUrl, { body: loginData })
 
-    if (success) {
-      localStorage.setItem('token', token)
-      setUserData(data)
-      navigate('/home')
-    } else {
-      setDatabaseError(true)
+      if (success) {
+        localStorage.setItem('token', token)
+        setUserData(data)
+        navigate('/home')
+      } else {
+        setDatabaseError(true)
+      }
+
+      setIsOffline(false)
+    } catch (e) {
+      setIsOffline(true)
     }
   }
 
   return (
-    <div className="first-div scrollbar-hide">
-      <div className="second-div">
-        <h1 className="first-h1">Veuillez-vous connecter !</h1>
-        {databaseError === true ? dbError : null}
-        <div className="third-div">
-          <h1 className="second-h1">Connexion</h1>
-          <form className="login-form" onSubmit={handleSubmit}>
-            <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="text" name="login" defaultValue="0346302300" ref={login}>Email ou Téléphone</Field>
-            {inputError["login"] === true ? error(showError.input.login) : null}
-            <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="password" name="password" ref={password}>Mot de passe</Field>
-            {inputError["password"] === true ? error(showError.input.password) : null}
-            <button className="login-button hover:bg-red-700" type="submit">Se connecter</button>
-          </form>
-          <p className="forget-password hover:underline"><Link to="/forget-password">Mot de passe oublié ?</Link></p>
-        </div>
-        <div className="fourth-div">
-          <hr className="hr"/>
-          <p className="new-p">Vous êtes nouveau ?</p>
-          <Link style={{ width: "100%" }} to="/signup"><button className="signup-button hover:bg-red-700" type="submit">Créer un nouveau compte</button></Link>
+    <>
+      {isOffline && <Offline/>}
+      <div className="first-div scrollbar-hide">
+        <div className="second-div">
+          <h1 className="first-h1">Veuillez-vous connecter !</h1>
+          {databaseError === true ? dbError : null}
+          <div className="third-div">
+            <h1 className="second-h1">Connexion</h1>
+            <form className="login-form" onSubmit={handleSubmit}>
+              <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="text" name="login" defaultValue="0346302300" ref={login}>Email ou Téléphone</Field>
+              {inputError["login"] === true ? error(showError.input.login) : null}
+              <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="password" name="password" ref={password}>Mot de passe</Field>
+              {inputError["password"] === true ? error(showError.input.password) : null}
+              <button className="login-button hover:bg-red-700" type="submit">Se connecter</button>
+            </form>
+            <p className="forget-password hover:underline"><Link to="/forget-password">Mot de passe oublié ?</Link></p>
+          </div>
+          <div className="fourth-div">
+            <hr className="hr"/>
+            <p className="new-p">Vous êtes nouveau ?</p>
+            <Link style={{ width: "100%" }} to="/signup"><button className="signup-button hover:bg-red-700" type="submit">Créer un nouveau compte</button></Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

@@ -1,51 +1,41 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 
 import Authentication from "./Authentication"
 import Navigation from "./Navigation"
 import Loading from "./assets/Loading"
+import Error from "./assets/Error"
 import context from "./utils/context"
-import { fetchServer } from "./utils/fetch-server"
+import { useFetch } from "./utils/hooks"
 
 function App() {
   const { ServerContext, ClientContext } = context
   const url = useContext(ServerContext)
   const [ userData, setUserData ] = useState(null)
 
-  useEffect(() => {
-    const sessionVerif = async () => {
-      if (localStorage.getItem("token")) {
-        const serverUrl = `${url}/api/session-verif`
-        const headers = { "Authorization": localStorage.getItem("token") }
-        const { success, data } = await fetchServer.post(serverUrl, { headers: headers })
+  const serverUrl = `${url}/api/session-verif`
+  const headers = { "Authorization": localStorage.getItem("token") }
+  const { loading, response, errors } = useFetch(serverUrl, { headers: headers })
 
-        if (success) {
-          setUserData(data)
-        } else {
-          localStorage.clear()
-          window.location.replace("/")
-        }
-      }
-    }
+  if (errors)
+    return <Error code="503" message={errors.message} action="reload">Try again</Error>
+  else if (loading)
+    return <Loading/>
 
-    sessionVerif()
-  }, [])
+  if (userData === null) {
+    if (response.success)
+      setUserData(response.data)
+    else
+      localStorage.removeItem("token")
 
-  if (localStorage.getItem("token")) {
-    if (userData === null) {
-      return (
-        <Loading/>
-      )
-    } else {
-      return (
-        <ClientContext.Provider value={{ userData, setUserData }}>
-          <Navigation/>
-        </ClientContext.Provider>
-      )
-    }
-  } else {
     return (
       <ClientContext.Provider value={{ userData, setUserData }}>
         <Authentication/>
+      </ClientContext.Provider>
+    )
+  } else {
+    return (
+      <ClientContext.Provider value={{ userData, setUserData }}>
+        <Navigation/>
       </ClientContext.Provider>
     )
   }

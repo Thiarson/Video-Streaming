@@ -1,6 +1,7 @@
 {
-  "name": "Video Streaming",
+  "name": "videostreaming",
   "version": "0.1.0",
+  "description": "Web client for the video streaming application",
   "private": true,
   "main": "src/index.tsx",
   "dependencies": {

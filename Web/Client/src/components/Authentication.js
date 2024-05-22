@@ -12,9 +12,8 @@ function Authentication() {
         <Route path='login' element={<Login/>}/>
         <Route path='signup' element={<Signup/>}/>
         <Route path='forget-password' element={<ForgetPassword/>}/>
-        <Route path='error' element={<Error/>}/>
+        <Route path='*' element={<Error/>}/>
         <Route path='/' element={<Navigate to='login'/>}/>
-        <Route path='*' element={<Navigate to='error'/>}/>
       </Routes>
     </BrowserRouter>
   )

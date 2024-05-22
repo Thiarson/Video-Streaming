@@ -1,15 +1,18 @@
-import { Link } from 'react-router-dom'
+const style = { textAlign: 'center' }
 
-function Error() {
-  const style = {
-    textAlign: 'center',
+function Error({ action, code = "404", message = "Page not found", path = "/", children = "Home" }) {
+  const navigate = () => {
+    if (action === "reload")
+      window.location.reload()
+    else
+      window.location.replace(path)
   }
-
+  
   return (
     <div style={style}>
-      <h1>Error 404</h1>
-      <h2>Page not found</h2>
-      <button><Link to='/'>Home</Link></button>
+      <h1>Error {code}</h1>
+      <h2>{message}</h2>
+      <button onClick={navigate}>{children}</button>
     </div>
   )
 }

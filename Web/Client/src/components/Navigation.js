@@ -8,9 +8,8 @@ function Navigation() {
     <BrowserRouter>
       <Routes>
         <Route path='/home' element={<Home/>}/>
-        <Route path='error' element={<Error/>}/>
+        <Route path='*' element={<Error/>}/>
         <Route path='/' element={<Navigate to='home'/>}/>
-        <Route path='*' element={<Navigate to='error'/>}/>
       </Routes>
     </BrowserRouter>
   )

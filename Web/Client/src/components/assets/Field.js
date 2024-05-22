@@ -14,4 +14,6 @@ const Field = forwardRef(({ inputStyle = inputDefaultStyle, labelStyle = labelDe
   )
 })
 
+Field.displayName = "Field"
+
 export default Field
