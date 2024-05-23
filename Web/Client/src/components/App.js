@@ -1,19 +1,21 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 
 import Authentication from "./Authentication"
 import Navigation from "./Navigation"
 import Loading from "./assets/Loading"
 import Error from "./assets/Error"
-import context from "./utils/context"
-import { useFetch } from "./utils/hooks"
+import useFetch from "./utils/hooks/useFetch"
+import storage from "./utils/local-storage"
+import { useServer } from "./utils/context/server"
+import { ClientProvider } from "./utils/context/client"
 
 function App() {
-  const { ServerContext, ClientContext } = context
-  const url = useContext(ServerContext)
-  const [ userData, setUserData ] = useState(null)
+  const { url } = useServer()
+  const [ sessionVerif, setSessionVerif] = useState(false)
+  const [ user, setUser ] = useState(null)
 
   const serverUrl = `${url}/api/session-verif`
-  const headers = { "Authorization": localStorage.getItem("token") }
+  const headers = { "Authorization": storage.token }
   const { loading, response, errors } = useFetch(serverUrl, { headers: headers })
 
   if (errors)
@@ -21,22 +23,22 @@ function App() {
   else if (loading)
     return <Loading/>
 
-  if (userData === null) {
-    if (response.success)
-      setUserData(response.data)
-    else
-      localStorage.removeItem("token")
+  if (user === null) {
+    if (!sessionVerif) {
+      response.success ? setUser(response.data) : storage.remove("token")
+      setSessionVerif(true)
+    }
 
     return (
-      <ClientContext.Provider value={{ userData, setUserData }}>
+      <ClientProvider value={{ user, setUser }}>
         <Authentication/>
-      </ClientContext.Provider>
+      </ClientProvider>
     )
   } else {
     return (
-      <ClientContext.Provider value={{ userData, setUserData }}>
+      <ClientProvider value={{ user, setUser }}>
         <Navigation/>
-      </ClientContext.Provider>
+      </ClientProvider>
     )
   }
 }

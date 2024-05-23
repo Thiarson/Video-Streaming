@@ -1,22 +1,23 @@
-import { useContext, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { VscError } from "react-icons/vsc"
 import { BiError } from "react-icons/bi"
 
 import Field from "../assets/Field"
 import Offline from "../assets/Offline"
-import context from "../utils/context"
+import useError from "../utils/hooks/useError"
+import storage from "../utils/local-storage"
+import { useServer } from "../utils/context/server"
+import { useClient } from "../utils/context/client"
 import { inputCheck, showError } from "../utils/form-verif"
-import { useError } from "../utils/hooks"
 import { fetchServer } from "../utils/fetch-server"
 
 import "../styles/Login.css"
 
 function Login() {
   const navigate = useNavigate()
-  const { ServerContext, ClientContext } = context
-  const url = useContext(ServerContext)
-  const { setUserData } = useContext(ClientContext)
+  const { url } = useServer()
+  const { setUser } = useClient()
   const login = useRef(null)
   const password = useRef(null)
   const [ inputError, setInputError, resetInputError ] = useError([ "login", "password" ])
@@ -77,9 +78,9 @@ function Login() {
       const { success, data, token } = await fetchServer.post(serverUrl, { body: loginData })
 
       if (success) {
-        localStorage.setItem('token', token)
-        setUserData(data)
-        navigate('/home')
+        storage.set("token", token)
+        setUser(data)
+        navigate("/home")
       } else {
         setDatabaseError(true)
       }
