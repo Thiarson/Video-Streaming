@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 75vh;
+  background-color: #f0f0f0;
+}
+
+.header {
+  font-size: 10rem;
+  margin: 0;
+  color: #3498db;
+}
+
+.paragraph {
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

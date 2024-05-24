@@ -26,7 +26,7 @@ function Login() {
   const queryKey = ["login"]
   const query = useQuery(queryKey, () => {
     return fetchServer.post("/api/login", { body: formData.current })
-  }, { enabled: false })
+  }, { cacheTime:0, enabled: false })
 
   const dbError = (
     <div className="login-error">
@@ -93,8 +93,7 @@ function Login() {
       } else {
         setDatabaseError(true)
       }
-
-    query.remove()
+    // query.remove()
   }
 
   return (

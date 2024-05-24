@@ -39,6 +39,11 @@ const fetchServer = {
         .catch((error) => {
           reject(error)
         })
+
+      // Firefox Ubuntu
+      setTimeout(() => {
+        reject(new Error("Request timed out"))
+      }, 6000);
     })
   }
 }

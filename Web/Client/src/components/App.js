@@ -16,7 +16,7 @@ function App() {
   const { loading, response, errors } = useFetch("/api/session-verif", { headers: headers })
 
   if (errors)
-    return <Error code="503" message={errors.message} action="reload">Try again</Error>
+    return <Error code="503" action="reload">Réessayer</Error>
   else if (loading)
     return <Loading/>
 

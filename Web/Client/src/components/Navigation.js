@@ -8,7 +8,7 @@ function Navigation() {
     <BrowserRouter>
       <Routes>
         <Route path='/home' element={<Home/>}/>
-        <Route path='*' element={<Error/>}/>
+        <Route path='*' element={<Error code={404}/>}/>
         <Route path='/' element={<Navigate to='home'/>}/>
       </Routes>
     </BrowserRouter>

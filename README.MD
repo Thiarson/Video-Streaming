@@ -4,6 +4,7 @@
   - UI with React and Typescript
 
 #TO DO
+  - Notifications
   - Cookies
   - DNS
   - Dark mode

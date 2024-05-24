@@ -1,12 +1,12 @@
-function Loading() {
-  const style = {
-    textAlign: 'center',
-  }
+import Spinner from "./Spinner"
 
+import "../styles/Loading.css"
+
+function Loading() {
   return (
-    <div style={style}>
-      <h1>Loading...</h1>
-      <h2>Please Wait !</h2>
+    <div className="loading">
+      <Spinner/>
+      <h1>Please Wait !</h1>
     </div>
   )
 }

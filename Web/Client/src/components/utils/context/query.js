@@ -4,8 +4,7 @@ import { ReactQueryDevtools } from "react-query/devtools"
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
-      retryDelay: 2000,
+      retry: 0, // Firefox Ubuntu
     }
   }
 })
