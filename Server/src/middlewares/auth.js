@@ -5,7 +5,9 @@ const { decodeJwtToken } = require("../lib/jwt-server")
  */
 module.exports = async (req, res, next) => {
   try {
-    const { payload } = decodeJwtToken(req.headers.authorization)
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
+    const { payload } = decodeJwtToken(token)
 
     if (payload) {
       req.data = payload

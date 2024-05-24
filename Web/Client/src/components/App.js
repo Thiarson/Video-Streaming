@@ -6,17 +6,14 @@ import Loading from "./assets/Loading"
 import Error from "./assets/Error"
 import useFetch from "./utils/hooks/useFetch"
 import storage from "./utils/local-storage"
-import { useServer } from "./utils/context/server"
 import { ClientProvider } from "./utils/context/client"
 
 function App() {
-  const { url } = useServer()
   const [ sessionVerif, setSessionVerif] = useState(false)
   const [ user, setUser ] = useState(null)
 
-  const serverUrl = `${url}/api/session-verif`
-  const headers = { "Authorization": storage.token }
-  const { loading, response, errors } = useFetch(serverUrl, { headers: headers })
+  const headers = { "Authorization": `Bearer ${storage.token}` }
+  const { loading, response, errors } = useFetch("/api/session-verif", { headers: headers })
 
   if (errors)
     return <Error code="503" message={errors.message} action="reload">Try again</Error>

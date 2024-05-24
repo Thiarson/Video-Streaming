@@ -5,9 +5,9 @@ import { useClient } from "../utils/context/client"
 
 function Home() {
   const navigate = useNavigate()
-  const { setUser } = useClient()
+  const { user, setUser } = useClient()
 
-  const signout = () => {
+  const logout = () => {
     storage.remove("token")
     setUser(null)
     navigate("/login")
@@ -16,7 +16,8 @@ function Home() {
   return (
     <div>
       <h1>Home</h1>
-      <button onClick={signout}>Deconnexion</button>
+      <p>Bonjour {user.userPseudo}</p>
+      <button onClick={logout}>Deconnexion</button>
     </div>
   )
 }

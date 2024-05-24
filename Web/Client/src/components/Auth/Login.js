@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useQuery } from "react-query"
 import { VscError } from "react-icons/vsc"
 import { BiError } from "react-icons/bi"
 
@@ -7,7 +8,6 @@ import Field from "../assets/Field"
 import Offline from "../assets/Offline"
 import useError from "../utils/hooks/useError"
 import storage from "../utils/local-storage"
-import { useServer } from "../utils/context/server"
 import { useClient } from "../utils/context/client"
 import { inputCheck, showError } from "../utils/form-verif"
 import { fetchServer } from "../utils/fetch-server"
@@ -16,13 +16,17 @@ import "../styles/Login.css"
 
 function Login() {
   const navigate = useNavigate()
-  const { url } = useServer()
   const { setUser } = useClient()
   const login = useRef(null)
   const password = useRef(null)
+  const formData = useRef(null)
   const [ inputError, setInputError, resetInputError ] = useError([ "login", "password" ])
   const [ databaseError, setDatabaseError ] = useState(false)
-  const [ isOffline, setIsOffline ] = useState(false)
+
+  const queryKey = ["login"]
+  const query = useQuery(queryKey, () => {
+    return fetchServer.post("/api/login", { body: formData.current })
+  }, { enabled: false })
 
   const dbError = (
     <div className="login-error">
@@ -68,15 +72,20 @@ function Login() {
     e.preventDefault()
     resetInputError()
 
-    const serverUrl = `${url}/api/login`
     const loginData = formVerif()
 
     if (loginData === null)
       return
 
-    try {
-      const { success, data, token } = await fetchServer.post(serverUrl, { body: loginData })
+    formData.current = loginData
+    query.refetch()
+  }
 
+  if (query.isError)
+    console.error(query.error);
+
+  if (query.isSuccess) {
+    const { success, data, token } = query.data
       if (success) {
         storage.set("token", token)
         setUser(data)
@@ -85,15 +94,12 @@ function Login() {
         setDatabaseError(true)
       }
 
-      setIsOffline(false)
-    } catch (e) {
-      setIsOffline(true)
-    }
+    query.remove()
   }
 
   return (
     <>
-      {isOffline && <Offline/>}
+      {query.isError && <Offline/>}
       <div className="first-div scrollbar-hide">
         <div className="second-div">
           <h1 className="first-h1">Veuillez-vous connecter !</h1>
@@ -105,7 +111,7 @@ function Login() {
               {inputError["login"] === true ? error(showError.input.login) : null}
               <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="password" name="password" ref={password}>Mot de passe</Field>
               {inputError["password"] === true ? error(showError.input.password) : null}
-              <button className="login-button hover:bg-red-700" type="submit">Se connecter</button>
+              <button className={`login-button hover:bg-red-700 ${query.isLoading && "disabled-button"}`} type="submit">Se connecter</button>
             </form>
             <p className="forget-password hover:underline"><Link to="/forget-password">Mot de passe oublié ?</Link></p>
           </div>

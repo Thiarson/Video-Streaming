@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { fetchServer } from "../fetch-server"
 
 function useFetch(url, options = {}) {
   const [ loading, setLoading ] = useState(true)
@@ -6,26 +7,12 @@ function useFetch(url, options = {}) {
   const [ errors, setErrors ] = useState(null)
   
   useEffect(() => {
-    const headers = { ...options.headers }
-    const body = { ...options.body }
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json; charset=UTF-8",
-        ...headers
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
-        if (response.ok)
-          return response.json()
-      })
+    fetchServer.post(url, options)
       .then((data) => {
-        setData(data)
+        setData(data);
       })
       .catch((error) => {
-        setErrors(error)
+        setErrors(error);
       })
       .finally(() => {
         setLoading(false)
