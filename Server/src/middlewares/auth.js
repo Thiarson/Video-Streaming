@@ -13,10 +13,16 @@ module.exports = async (req, res, next) => {
       req.data = payload
       next()
     } else {
-      res.json({ success: false })
+      res.json({
+        success: false,
+        data: null,
+      })
     }
   } catch (e) {
     console.error(e.message)
-    res.json({ success: false })
+    res.json({
+      success: false,
+      data: null,
+    })
   }
 }

@@ -1,12 +1,16 @@
 import { createContext, useContext, useState } from "react"
+import type { FC, PropsWithChildren } from "react"
 
-const ThemeContext = createContext("light")
+const ThemeContext = createContext({
+  theme: "light",
+  toggleTheme: () => { console.error("toggleTheme: no context"); },
+})
 
 function useTheme() {
   return useContext(ThemeContext)
 }
 
-function ThemeProvider({ children }) {
+const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [ theme, setTheme ] = useState("light")
   
   const toggleTheme = () => {

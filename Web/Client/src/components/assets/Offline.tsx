@@ -1,7 +1,12 @@
 import { createPortal } from "react-dom"
 import { motion } from "framer-motion"
+import type { MotionStyle } from "framer-motion"
 
-const styles = {
+type Style = {
+  popup: MotionStyle,
+}
+
+const styles: Style = {
   popup: {
     position: "fixed",
     top: 3,

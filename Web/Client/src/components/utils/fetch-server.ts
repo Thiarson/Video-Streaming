@@ -1,3 +1,5 @@
+import type { FetchOptions } from "./types/fetch"
+
 const serverInfo = {
   protocol: window.location.protocol,
   hostname: window.location.hostname,
@@ -19,7 +21,7 @@ const defaultOptions = {
 
 const fetchServer = {
   get: null,
-  post: (url, options = {}) => {
+  post: (url: string, options: FetchOptions = {}) => {
     const headers = { ...options.headers }
     const body = { ...options.body }
 

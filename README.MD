@@ -6,10 +6,13 @@
 #TO DO
   - Notifications
   - Cookies
-  - DNS
   - Dark mode
+  - Admin
+  - Chat
   - Server Side Rendering
   - Mobile app
+  - A.I
+  - DNS
 
 #DONE
   - Database models

@@ -1,6 +1,15 @@
 import { motion } from "framer-motion"
+import type { FC, PropsWithChildren } from 'react';
 
 import "../styles/Error.css"
+
+type Code = "404" | "502" | "503"
+
+type Props = PropsWithChildren<{
+  action?: string,
+  code: Code,
+  path?: string,
+}>
 
 const containerVariants = {
   hidden: { opacity: 0, x: "100vw" },
@@ -33,10 +42,11 @@ const buttonVariants = {
 
 const message = {
   "404": "L'URL que vous avez spécifier n'existe pas",
+  "502": "La réponse du serveur n'est pas valide",
   "503": "Cette ressource n'est pas disponible",
 }
 
-function Error({ action, code, path = "/", children = "Accueil" }) {
+const Error: FC<Props> = ({ action, code, path = "/", children = "Accueil" }) => {
   const navigate = () => {
     if (action === "reload")
       window.location.reload()
@@ -55,9 +65,9 @@ function Error({ action, code, path = "/", children = "Accueil" }) {
       <motion.h1 className="header" variants={textVariants}>{code}</motion.h1>
       <motion.p className="paragraph" variants={textVariants}>{message[code]}</motion.p>
       <motion.div variants={textVariants}>
-        <button onClick={navigate}>
-          <motion.button className="button" variants={buttonVariants} whileHover="hover">{children}</motion.button>
-        </button>
+        <motion.button className="button" variants={buttonVariants} whileHover="hover" onClick={navigate}>
+          {children}
+        </motion.button>
       </motion.div>
     </motion.div>
   )

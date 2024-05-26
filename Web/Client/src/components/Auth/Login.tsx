@@ -3,25 +3,30 @@ import { Link, useNavigate } from "react-router-dom"
 import { useQuery } from "react-query"
 import { VscError } from "react-icons/vsc"
 import { BiError } from "react-icons/bi"
+import type { FormEvent } from "react"
 
 import Field from "../assets/Field"
 import Offline from "../assets/Offline"
-import useError from "../utils/hooks/useError"
+import Invalid from "../assets/Error"
 import storage from "../utils/local-storage"
+import { useError } from "../utils/hooks/useError"
 import { useClient } from "../utils/context/client"
 import { inputCheck, showError } from "../utils/form-verif"
 import { fetchServer } from "../utils/fetch-server"
+import type { DynamicObject } from "../utils/types/object"
 
 import "../styles/Login.css"
+import { FetchResponse } from "../utils/types/fetch"
+import { responseSchema } from "../utils/data-validator"
 
 function Login() {
   const navigate = useNavigate()
   const { setUser } = useClient()
-  const login = useRef(null)
-  const password = useRef(null)
-  const formData = useRef(null)
-  const [ inputError, setInputError, resetInputError ] = useError([ "login", "password" ])
+  const login = useRef<HTMLInputElement>(null)
+  const password = useRef<HTMLInputElement>(null)
+  const formData = useRef<DynamicObject<string, string>>({})
   const [ databaseError, setDatabaseError ] = useState(false)
+  const { inputError, setInputError, resetInputError } = useError([ "login", "password" ])
 
   const queryKey = ["login"]
   const query = useQuery(queryKey, () => {
@@ -35,7 +40,7 @@ function Login() {
     </div>
   )
 
-  const error = (input) => (
+  const error = (input: string) => (
     <div className="input-error">
       <VscError size={20}/>
       <p>{input}</p>
@@ -45,7 +50,11 @@ function Login() {
   const formVerif = () => {
     let loginData = null
     let isFormValid = true
-    const inputs = {
+
+    if (login.current === null || password.current === null)
+      throw new Error("Fields reference are null")
+
+    const inputs: DynamicObject<string, HTMLInputElement> = {
       login: login.current,
       password: password.current,
     }
@@ -68,7 +77,7 @@ function Login() {
     return loginData
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     resetInputError()
 
@@ -85,15 +94,23 @@ function Login() {
     console.error(query.error);
 
   if (query.isSuccess) {
-    const { success, data, token } = query.data
+    try {
+      const response = query.data as FetchResponse
+      const { success, data, token } = response
+
+      responseSchema.parse(response)
+      
       if (success) {
         storage.set("token", token)
         setUser(data)
         navigate("/home")
       } else {
-        setDatabaseError(true)
+        !databaseError && setDatabaseError(true)
       }
-    // query.remove()
+    } catch (e) {
+      console.error(e);
+      return <Invalid code="502" action="reload">Réessayer</Invalid>
+    }    
   }
 
   return (

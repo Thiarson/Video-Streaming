@@ -38,7 +38,10 @@ authRouter.post("/login", async function (req, res) {
     })
   } catch (e) {
     console.error(e.message);
-    res.json({ success: false })
+    res.json({
+      success: false,
+      data: null,
+    })
   }
 })
 
@@ -63,7 +66,10 @@ authRouter.post("/session-verif", auth, async function (req, res) {
     })
   } catch (e) {
     console.error(e.message);
-    res.json({ success: false })
+    res.json({
+      success: false,
+      data: null,
+    })
   }
 })
 

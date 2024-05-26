@@ -1,9 +1,9 @@
 const storage = {
   token: localStorage.getItem("token"),
-  set: (key, value) => {
-    localStorage.setItem(key, value)
+  set: (key: string, value?: string) => {
+    value && localStorage.setItem(key, value)
   },
-  remove: (key) => {
+  remove: (key: string) => {
     localStorage.removeItem(key)
   },
 }

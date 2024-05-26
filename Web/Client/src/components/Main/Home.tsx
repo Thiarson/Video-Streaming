@@ -16,7 +16,7 @@ function Home() {
   return (
     <div>
       <h1>Home</h1>
-      <p>Bonjour {user.userPseudo}</p>
+      <p>Bonjour {user?.userPseudo}</p>
       <button onClick={logout}>Deconnexion</button>
     </div>
   )

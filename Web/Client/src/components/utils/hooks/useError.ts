@@ -1,7 +1,9 @@
 import { useState } from "react"
 
-function useError(inputArray) {
-  const inputs = {}
+import type { DynamicObject } from "../types/object"
+
+function useError(inputArray: string[]) {
+  const inputs: DynamicObject<string, boolean> = {}
   
   inputArray.forEach((input) => {
     inputs[input] = false
@@ -9,7 +11,7 @@ function useError(inputArray) {
 
   const [ inputError, setInputError ] = useState(inputs)
 
-  const setInput = (elt, value) => {
+  const setInput = (elt: string, value: boolean) => {
     setInputError((state) => {
       const inputs = { ...state }
 
@@ -31,7 +33,7 @@ function useError(inputArray) {
     })
   }
 
-  return [ inputError, setInput, resetInput ]
+  return { inputError, setInputError: setInput, resetInputError: resetInput }
 }
 
-export default useError
+export { useError }

@@ -1,3 +1,7 @@
+type InputCheck = {
+  [key: string]: (value: HTMLInputElement) => boolean
+}
+
 const formRegex = {
   pseudo: /^[a-z]{3,10}$/i,
   birth: /^(\d{4})-(\d{2})-(\d{2})$/,
@@ -6,9 +10,12 @@ const formRegex = {
   price: /^\d{1,7}$/,
 }
 
-const inputStyle = {
-  valid: 'border-color: #666;',
-  invalid: 'border-color: red;',
+const validStyle: Partial<CSSStyleDeclaration> = {
+  borderColor: "#666",
+}
+
+const invalidStyle: Partial<CSSStyleDeclaration> = {
+  borderColor: "red"
 }
 
 const showError = {
@@ -43,98 +50,104 @@ const showError = {
   },
 }
 
-const capitalize = (string) => {
+const changeStyle = (element: HTMLElement, styles: Partial<CSSStyleDeclaration>) => {
+  for (const [key, value] of Object.entries(styles)) {
+    (element.style as any)[key] = value
+  }
+}
+
+const capitalize = (string: string) => {
   string = string.toLowerCase()
   string = string.replace(string.charAt(0), string.charAt(0).toUpperCase())
 
   return string
 }
 
-const isObjEmpty = (obj) => {
+const isObjEmpty = (obj: Object) => {
   for (const elt in obj)
     return false
 
   return true
 }
 
-const inputCheck = {
-  sex: (sex) => {
-    if(!sex[0].checked && !sex[1].checked)
-      return false
+const inputCheck: InputCheck = {
+  // sex: (sex) => {
+  //   if(!sex[0].checked && !sex[1].checked)
+  //     return false
 
-    return true
-  },
+  //   return true
+  // },
   birth: (birth) => {
     if(formRegex.birth.test(birth.value)) {
       // Il faut verifier ici l'âge de l'utilisateur
       return true
     }
     
-    birth.style = inputStyle.invalid
+    changeStyle(birth, invalidStyle)
     return false
   },
   pseudo: (pseudo) => {
     pseudo.value = capitalize(pseudo.value)
 
     if(!formRegex.pseudo.test(pseudo.value)) {
-      pseudo.style = inputStyle.invalid
+      changeStyle(pseudo, invalidStyle)
       return false
     }
 
-    pseudo.style = inputStyle.valid
+    changeStyle(pseudo, validStyle)
     return true
   },
   email: (email) => {
     email.value = email.value.toLowerCase()
 
     if(!formRegex.email.test(email.value)) {
-      email.style = inputStyle.invalid
+      changeStyle(email, invalidStyle)
       return false
     }
 
-    email.style = inputStyle.valid
+    changeStyle(email, validStyle)
     return true
   },
   phone: (phone) => {
     if(!formRegex.phone.test(phone.value)) {
-      phone.style = inputStyle.invalid
+      changeStyle(phone, invalidStyle)
       return false
     }
 
-    phone.style = inputStyle.valid
+    changeStyle(phone, validStyle)
     return true
   },
   password: (password) => {
     if(password.value.length < 6) {
-      password.style = inputStyle.invalid
+      changeStyle(password, invalidStyle)
       return false
     }
   
-    password.style = inputStyle.valid
+    changeStyle(password, validStyle)
     return true
   },
-  confirm: ({ confirm, password }) => {
-    if(confirm.value.length < 6 || confirm.value !== password.value) {
-      confirm.style = inputStyle.invalid
-      return false
-    }
+  // confirm: ({ confirm, password }) => {
+  //   if(confirm.value.length < 6 || confirm.value !== password.value) {
+  //     confirm.style = inputStyle.invalid
+  //     return false
+  //   }
 
-    confirm.style = inputStyle.valid
-    return true
-  },
+  //   confirm.style = inputStyle.valid
+  //   return true
+  // },
   login: (login) => {
     login.value = login.value.toLowerCase()
 
     if(formRegex.email.test(login.value)) {
-      login.style = inputStyle.valid
+      changeStyle(login, validStyle)
       return true
     }
     else if(formRegex.phone.test(login.value)) {
-      login.style = inputStyle.valid
+      changeStyle(login, validStyle)
       return true
     }
 
-    login.style = inputStyle.invalid
+    changeStyle(login, invalidStyle)
     return false
   },
   title: (title) => {
@@ -151,20 +164,20 @@ const inputCheck = {
 
     return true
   },
-  video: (video) => {
-    if(video.files.length === 0) {
-      return false
-    }
+  // video: (video) => {
+  //   if(video.files.length === 0) {
+  //     return false
+  //   }
 
-    return true
-  },
-  image: (image) => {
-    if(image.files.length === 0) {
-      return false
-    }
+  //   return true
+  // },
+  // image: (image) => {
+  //   if(image.files.length === 0) {
+  //     return false
+  //   }
 
-    return true
-  },
+  //   return true
+  // },
   price: (price) => {
     if(!formRegex.price.test(price.value)) {
       return false

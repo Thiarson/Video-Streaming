@@ -1,5 +1,7 @@
+import { PropsWithChildren } from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
+import type { FC } from "react"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,7 +11,7 @@ const queryClient = new QueryClient({
   }
 })
 
-function QueryProvider({ children }) {
+const QueryProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
