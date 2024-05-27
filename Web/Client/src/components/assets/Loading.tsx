@@ -1,6 +1,6 @@
 import Spinner from "./Spinner"
 
-import "../styles/Loading.css"
+import "../styles/assets/Loading.css"
 
 function Loading() {
   return (

@@ -1,4 +1,4 @@
-.input {
+.field-input {
   width: 100%;
   display: block;
   border-radius: 0.375rem/* 6px */;
@@ -11,7 +11,7 @@
 
 }
 
-.label {
+.field-label {
   position: absolute;
   color: rgb(161 161 170);
   transition-duration: 150ms;

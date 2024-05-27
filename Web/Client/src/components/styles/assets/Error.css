@@ -1,4 +1,4 @@
-.container {
+.error-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -7,18 +7,18 @@
   background-color: #f0f0f0;
 }
 
-.header {
+.error-header {
   font-size: 10rem;
   margin: 0;
   color: #3498db;
 }
 
-.paragraph {
+.error-paragraph {
   font-size: 2rem;
   color: #2c3e50;
 }
 
-.button {
+.error-button {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 1rem;

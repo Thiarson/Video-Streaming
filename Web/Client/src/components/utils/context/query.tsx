@@ -4,11 +4,11 @@ import { ReactQueryDevtools } from "react-query/devtools"
 import type { FC } from "react"
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 0, // Firefox Ubuntu
-    }
-  }
+  // defaultOptions: {
+  //   queries: {
+  //     retry: 0, // Firefox Ubuntu
+  //   }
+  // }
 })
 
 const QueryProvider: FC<PropsWithChildren> = ({ children }) => {

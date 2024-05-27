@@ -1,0 +1,82 @@
+.code-first-container {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  inset: 0px;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 50;
+}
+
+.code-second-container {
+  width: 440px;
+  background-color: whitesmoke;
+  border-radius: 6px;
+  padding: 24px 0;
+}
+
+.code-title-container {
+  padding-left: 3rem/* 48px */;
+  padding-right: 3rem/* 48px */;
+}
+
+.code-title {
+  display: flex;
+  justify-content: center;
+  font-size: 1.875rem/* 30px */;
+  line-height: 2.25rem/* 36px */;
+  font-weight: 600;
+  margin-bottom: 1rem/* 16px */;
+}
+
+.code-hr {
+  background-color: rgba(113, 113, 122, 0.5);
+  height: 2px;
+}
+
+.code-content-container {
+  padding-left: 3rem/* 48px */;
+  padding-right: 3rem/* 48px */;
+  padding-top: 1rem/* 16px */;
+}
+
+.code-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem/* 16px */;
+}
+
+.code-timeout {
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: 600;
+  align-self: center;
+  padding-bottom: 5px;
+}
+
+.code-resend-link {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.code-button-container {
+  display: flex;
+  gap: 1rem/* 16px */;
+}
+
+.code-button {
+  width: 100%;
+  color: white;
+  padding-top: 0.75rem/* 12px */;
+  padding-bottom: 0.75rem/* 12px */;
+  margin-top: 1.25rem/* 20px */;
+  font-weight: 600;
+  border-radius: 0.375rem/* 6px */;
+}
+
+.code-disabled-button {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  pointer-events: none;
+}

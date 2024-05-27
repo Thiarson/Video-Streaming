@@ -1,3 +1,5 @@
+import type { DynamicObject } from "./types/object"
+
 type InputCheck = {
   [key: string]: (value: HTMLInputElement) => boolean
 }
@@ -50,6 +52,32 @@ const showError = {
   },
 }
 
+const isFieldNull = (fields: DynamicObject<string, HTMLInputElement | null>) => {
+  let inputs: DynamicObject<string, HTMLInputElement> = {}
+
+  for (const [key, value] of Object.entries(fields)) {
+    if (value === null)
+      throw new Error(`${key} reference is null`)
+
+    inputs[key] = value
+  }
+
+  return inputs
+}
+
+const isBoxNull = (input: (HTMLInputElement | null)[]) => {
+  let inputs: HTMLInputElement[] = []
+
+  input.forEach((box) => {
+    if (box === null)
+      throw new Error(`${box} reference is null`)
+
+    inputs.push(box)
+  })
+
+  return inputs
+}
+
 const changeStyle = (element: HTMLElement, styles: Partial<CSSStyleDeclaration>) => {
   for (const [key, value] of Object.entries(styles)) {
     (element.style as any)[key] = value
@@ -70,13 +98,25 @@ const isObjEmpty = (obj: Object) => {
   return true
 }
 
-const inputCheck: InputCheck = {
-  // sex: (sex) => {
-  //   if(!sex[0].checked && !sex[1].checked)
-  //     return false
+const sexCheck = (sex: HTMLInputElement[]) => {
+  if (!sex[0].checked && !sex[1].checked)
+    return false
 
-  //   return true
-  // },
+  return true
+}
+
+
+const confirmCheck = ({ confirm, password }: DynamicObject<string, HTMLInputElement>) => {
+  if(confirm.value.length < 6 || confirm.value !== password.value) {
+    changeStyle(confirm, invalidStyle)
+    return false
+  }
+
+  changeStyle(confirm, validStyle)
+  return true
+}
+
+const inputCheck: InputCheck = {
   birth: (birth) => {
     if(formRegex.birth.test(birth.value)) {
       // Il faut verifier ici l'âge de l'utilisateur
@@ -126,15 +166,6 @@ const inputCheck: InputCheck = {
     changeStyle(password, validStyle)
     return true
   },
-  // confirm: ({ confirm, password }) => {
-  //   if(confirm.value.length < 6 || confirm.value !== password.value) {
-  //     confirm.style = inputStyle.invalid
-  //     return false
-  //   }
-
-  //   confirm.style = inputStyle.valid
-  //   return true
-  // },
   login: (login) => {
     login.value = login.value.toLowerCase()
 
@@ -201,4 +232,4 @@ const inputCheck: InputCheck = {
   },
 }
 
-export { formRegex, inputCheck, showError, isObjEmpty }
+export { formRegex, inputCheck, sexCheck, confirmCheck, showError, isFieldNull, isBoxNull, isObjEmpty }

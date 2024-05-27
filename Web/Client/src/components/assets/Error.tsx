@@ -1,7 +1,7 @@
-import { motion } from "framer-motion"
-import type { FC, PropsWithChildren } from 'react';
+import { AnimatePresence, motion } from "framer-motion"
+import { useEffect, useState, type FC, type PropsWithChildren } from 'react';
 
-import "../styles/Error.css"
+import "../styles/assets/Error.css"
 
 type Code = "404" | "502" | "503"
 
@@ -47,29 +47,41 @@ const message = {
 }
 
 const Error: FC<Props> = ({ action, code, path = "/", children = "Accueil" }) => {
+  const [ visible, setVisible ] = useState(false)
+
   const navigate = () => {
-    if (action === "reload")
-      window.location.reload()
-    else
-      window.location.replace(path)
+    setVisible(false)
+    setTimeout(() => {
+      if (action === "reload")
+        window.location.reload()
+      else
+        window.location.replace(path)
+    }, 500);
   }
 
+  useEffect(() => {
+    setVisible(true)
+  }, [])
+
   return (
-    <motion.div
-      className="container"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-    >
-      <motion.h1 className="header" variants={textVariants}>{code}</motion.h1>
-      <motion.p className="paragraph" variants={textVariants}>{message[code]}</motion.p>
-      <motion.div variants={textVariants}>
-        <motion.button className="button" variants={buttonVariants} whileHover="hover" onClick={navigate}>
-          {children}
-        </motion.button>
-      </motion.div>
-    </motion.div>
+    <AnimatePresence>
+      {visible &&
+      (<motion.div
+        className="error-container"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <motion.h1 className="error-header" variants={textVariants}>{code}</motion.h1>
+        <motion.p className="error-paragraph" variants={textVariants}>{message[code]}</motion.p>
+        <motion.div variants={textVariants}>
+          <motion.button className="error-button" variants={buttonVariants} whileHover="hover" onClick={navigate}>
+            {children}
+          </motion.button>
+        </motion.div>
+      </motion.div>)}
+      </AnimatePresence>
   )
 }
 

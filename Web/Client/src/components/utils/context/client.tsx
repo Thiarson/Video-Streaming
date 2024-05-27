@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react"
 import type { FC, PropsWithChildren, Dispatch, SetStateAction } from "react"
 
-import type { User } from "../types/user"
+import type { User } from "../types/data"
 
 type ClientValue = {
   user: User | null,

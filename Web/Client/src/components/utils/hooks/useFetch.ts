@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
 
 import { fetchServer } from "../fetch-server"
-import type { FetchOptions, FetchResponse } from "../types/fetch"
+import type { FetchOptions, FetchCodeResponse, FetchUserResponse } from "../types/fetch"
 
-type Fetch = (url: string, options: FetchOptions) => { loading: boolean, response: FetchResponse, errors: any }
+type Response = FetchUserResponse | FetchCodeResponse
+
+type Fetch = (url: string, options: FetchOptions) => { loading: boolean, response: Response, errors: any }
 
 const useFetch: Fetch = (url, options = {}) => {
   const [ loading, setLoading ] = useState(true)

@@ -1,63 +1,47 @@
 import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useQuery } from "react-query"
-import { VscError } from "react-icons/vsc"
-import { BiError } from "react-icons/bi"
 import type { FormEvent } from "react"
 
 import Field from "../assets/Field"
 import Offline from "../assets/Offline"
-import Invalid from "../assets/Error"
+import Error from "../assets/Error"
+import DbError from "../assets/DbError"
+import InputError from "../assets/InputError"
 import storage from "../utils/local-storage"
 import { useError } from "../utils/hooks/useError"
 import { useClient } from "../utils/context/client"
-import { inputCheck, showError } from "../utils/form-verif"
+import { inputCheck, isFieldNull, showError } from "../utils/form-verif"
 import { fetchServer } from "../utils/fetch-server"
-import type { DynamicObject } from "../utils/types/object"
-
-import "../styles/Login.css"
-import { FetchResponse } from "../utils/types/fetch"
 import { responseSchema } from "../utils/data-validator"
+import type { DynamicObject } from "../utils/types/object"
+import type { FetchUserResponse } from "../utils/types/fetch"
+import type { Login as Id } from "../utils/types/data"
+
+import "../styles/Auth/Login.css"
 
 function Login() {
   const navigate = useNavigate()
-  const { setUser } = useClient()
   const login = useRef<HTMLInputElement>(null)
   const password = useRef<HTMLInputElement>(null)
   const formData = useRef<DynamicObject<string, string>>({})
+  const { setUser } = useClient()
   const [ databaseError, setDatabaseError ] = useState(false)
   const { inputError, setInputError, resetInputError } = useError([ "login", "password" ])
 
   const queryKey = ["login"]
   const query = useQuery(queryKey, () => {
     return fetchServer.post("/api/login", { body: formData.current })
-  }, { cacheTime:0, enabled: false })
-
-  const dbError = (
-    <div className="login-error">
-      <BiError size={25}/>
-      <p>L'email ou le mot de passe est invalide !</p>
-    </div>
-  )
-
-  const error = (input: string) => (
-    <div className="input-error">
-      <VscError size={20}/>
-      <p>{input}</p>
-    </div>
-  )
+  }, { cacheTime: 0, enabled: false })
  
-  const formVerif = () => {
-    let loginData = null
+  const formVerif = (): Id | null => {
+    let loginData: Id | null = null
     let isFormValid = true
 
-    if (login.current === null || password.current === null)
-      throw new Error("Fields reference are null")
-
-    const inputs: DynamicObject<string, HTMLInputElement> = {
+    const inputs= isFieldNull({
       login: login.current,
       password: password.current,
-    }
+    })
 
     for (const input in inputs) {
       const inputValid = inputCheck[input](inputs[input])
@@ -69,8 +53,8 @@ function Login() {
 
     if (isFormValid) {
       loginData = {
-        login: login.current.value,
-        password: password.current.value,
+        login: inputs.login.value,
+        password: inputs.password.value,
       }
     }
 
@@ -95,7 +79,7 @@ function Login() {
 
   if (query.isSuccess) {
     try {
-      const response = query.data as FetchResponse
+      const response = query.data as FetchUserResponse
       const { success, data, token } = response
 
       responseSchema.parse(response)
@@ -109,32 +93,32 @@ function Login() {
       }
     } catch (e) {
       console.error(e);
-      return <Invalid code="502" action="reload">Réessayer</Invalid>
+      return <Error code="502" action="reload">Réessayer</Error>
     }    
   }
 
   return (
     <>
       {query.isError && <Offline/>}
-      <div className="first-div scrollbar-hide">
-        <div className="second-div">
-          <h1 className="first-h1">Veuillez-vous connecter !</h1>
-          {databaseError === true ? dbError : null}
-          <div className="third-div">
-            <h1 className="second-h1">Connexion</h1>
+      <div className="login-first-div scrollbar-hide">
+        <div className="login-second-div">
+          <h1 className="login-first-h1">Veuillez-vous connecter !</h1>
+          {databaseError && <DbError>L'email ou le mot de passe est invalide !</DbError>}
+          <div className="login-third-div">
+            <h1 className="login-second-h1">Connexion</h1>
             <form className="login-form" onSubmit={handleSubmit}>
               <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="text" name="login" defaultValue="0346302300" ref={login}>Email ou Téléphone</Field>
-              {inputError["login"] === true ? error(showError.input.login) : null}
+              {inputError["login"] && <InputError>{showError.input.login}</InputError>}
               <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="password" name="password" ref={password}>Mot de passe</Field>
-              {inputError["password"] === true ? error(showError.input.password) : null}
-              <button className={`login-button hover:bg-red-700 ${query.isLoading && "disabled-button"}`} type="submit">Se connecter</button>
+              {inputError["password"] && <InputError>{showError.input.password}</InputError>}
+              <button className={`login-button hover:bg-red-700 ${query.isLoading && "login-disabled-button"}`} type="submit">Se connecter</button>
             </form>
-            <p className="forget-password hover:underline"><Link to="/forget-password">Mot de passe oublié ?</Link></p>
+            <p className="login-forget-password hover:underline"><Link to="/forget-password">Mot de passe oublié ?</Link></p>
           </div>
-          <div className="fourth-div">
-            <hr className="hr"/>
-            <p className="new-p">Vous êtes nouveau ?</p>
-            <Link style={{ width: "100%" }} to="/signup"><button className="signup-button hover:bg-red-700" type="submit">Créer un nouveau compte</button></Link>
+          <div className="login-fourth-div">
+            <hr className="login-hr"/>
+            <p className="login-new-paragraph">Vous êtes nouveau ?</p>
+            <Link style={{ width: "100%" }} to="/signup"><button className="login-signup-button hover:bg-red-700" type="submit">Créer un nouveau compte</button></Link>
           </div>
         </div>
       </div>

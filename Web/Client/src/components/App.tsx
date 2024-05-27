@@ -8,7 +8,8 @@ import storage from "./utils/local-storage"
 import { useFetch } from "./utils/hooks/useFetch"
 import { ClientProvider } from "./utils/context/client"
 import { responseSchema } from "./utils/data-validator"
-import type { User } from "./utils/types/user"
+import type { User } from "./utils/types/data"
+import type { FetchUserResponse } from "./utils/types/fetch"
 
 function App() {
   const [ sessionVerif, setSessionVerif] = useState(false)
@@ -31,7 +32,8 @@ function App() {
 
   if (user === null) {
     if (!sessionVerif) {
-      response.success ? setUser(response.data) : storage.remove("token")
+      const { success, data } = response as FetchUserResponse
+      success ? setUser(data) : storage.remove("token")
       setSessionVerif(true)
     }
   }

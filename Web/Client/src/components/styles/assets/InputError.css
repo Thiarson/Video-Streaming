@@ -1,0 +1,10 @@
+.input-error {
+  display: flex;
+  gap: 0.5rem/* 8px */;
+  align-items: center;
+  color: rgb(220 38 38);
+  height: 0.25rem/* 4px */;
+  margin-bottom: 0.5rem/* 8px */;
+  font-size: 0.875rem/* 14px */;
+  line-height: 1.25rem/* 20px */;
+}

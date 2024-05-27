@@ -10,6 +10,7 @@
   - Admin
   - Chat
   - Server Side Rendering
+  - Migrate Server to Typescript
   - Mobile app
   - A.I
   - DNS
