@@ -1,4 +1,4 @@
-package thiarson.app.streamingvideo;
+package thiarson.app.streamingvideoadmin;
 
 import org.junit.Test;
 

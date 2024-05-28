@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "thiarson.app.streamingvideo"
+    namespace = "thiarson.app.videostreamingadmin"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "thiarson.app.streamingvideo"
+        applicationId = "thiarson.app.videostreamingadmin"
         minSdk = 21
         targetSdk = 34
         versionCode = 1

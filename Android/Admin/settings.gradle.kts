@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "StreamingVideo"
+rootProject.name = "VideoStreamingAdmin"
 include(":app")

@@ -1,4 +1,4 @@
-package thiarson.app.streamingvideo;
+package thiarson.app.streamingvideoadmin;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("thiarson.app.streamingvideo", appContext.getPackageName());
+        assertEquals("thiarson.app.streamingvideoadmin", appContext.getPackageName());
     }
 }

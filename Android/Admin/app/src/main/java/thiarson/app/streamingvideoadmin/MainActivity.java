@@ -1,4 +1,4 @@
-package thiarson.app.streamingvideo;
+package thiarson.app.streamingvideoadmin;
 
 import androidx.appcompat.app.AppCompatActivity;
 
