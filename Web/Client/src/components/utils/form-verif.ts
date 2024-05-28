@@ -4,6 +4,8 @@ type InputCheck = {
   [key: string]: (value: HTMLInputElement) => boolean
 }
 
+type StyleType = keyof typeof styles
+
 const formRegex = {
   pseudo: /^[a-z]{3,10}$/i,
   birth: /^(\d{4})-(\d{2})-(\d{2})$/,
@@ -12,12 +14,13 @@ const formRegex = {
   price: /^\d{1,7}$/,
 }
 
-const validStyle: Partial<CSSStyleDeclaration> = {
-  borderColor: "#666",
-}
-
-const invalidStyle: Partial<CSSStyleDeclaration> = {
-  borderColor: "red"
+const styles: DynamicObject<string, Partial<CSSStyleDeclaration>> = {
+  valid: {
+    borderColor: "#666",
+  },
+  invalid: {
+    borderColor: "red"
+  },
 }
 
 const showError = {
@@ -78,8 +81,15 @@ const isBoxNull = (input: (HTMLInputElement | null)[]) => {
   return inputs
 }
 
-const changeStyle = (element: HTMLElement, styles: Partial<CSSStyleDeclaration>) => {
-  for (const [key, value] of Object.entries(styles)) {
+// const changeStyle = (element: HTMLElement, styles: Partial<CSSStyleDeclaration>) => {
+//   for (const [key, value] of Object.entries(styles)) {
+//     (element.style as any)[key] = value
+//   }
+// }
+
+
+const changeStyle = (element: HTMLElement, type: StyleType) => {
+  for (const [key, value] of Object.entries(styles[type])) {
     (element.style as any)[key] = value
   }
 }
@@ -108,11 +118,11 @@ const sexCheck = (sex: HTMLInputElement[]) => {
 
 const confirmCheck = ({ confirm, password }: DynamicObject<string, HTMLInputElement>) => {
   if(confirm.value.length < 6 || confirm.value !== password.value) {
-    changeStyle(confirm, invalidStyle)
+    changeStyle(confirm, "invalid")
     return false
   }
 
-  changeStyle(confirm, validStyle)
+  changeStyle(confirm, "valid")
   return true
 }
 
@@ -123,62 +133,62 @@ const inputCheck: InputCheck = {
       return true
     }
     
-    changeStyle(birth, invalidStyle)
+    changeStyle(birth, "invalid")
     return false
   },
   pseudo: (pseudo) => {
     pseudo.value = capitalize(pseudo.value)
 
     if(!formRegex.pseudo.test(pseudo.value)) {
-      changeStyle(pseudo, invalidStyle)
+      changeStyle(pseudo, "invalid")
       return false
     }
 
-    changeStyle(pseudo, validStyle)
+    changeStyle(pseudo, "invalid")
     return true
   },
   email: (email) => {
     email.value = email.value.toLowerCase()
 
     if(!formRegex.email.test(email.value)) {
-      changeStyle(email, invalidStyle)
+      changeStyle(email, "invalid")
       return false
     }
 
-    changeStyle(email, validStyle)
+    changeStyle(email, "valid")
     return true
   },
   phone: (phone) => {
     if(!formRegex.phone.test(phone.value)) {
-      changeStyle(phone, invalidStyle)
+      changeStyle(phone, "invalid")
       return false
     }
 
-    changeStyle(phone, validStyle)
+    changeStyle(phone, "valid")
     return true
   },
   password: (password) => {
     if(password.value.length < 6) {
-      changeStyle(password, invalidStyle)
+      changeStyle(password, "invalid")
       return false
     }
   
-    changeStyle(password, validStyle)
+    changeStyle(password, "valid")
     return true
   },
   login: (login) => {
     login.value = login.value.toLowerCase()
 
     if(formRegex.email.test(login.value)) {
-      changeStyle(login, validStyle)
+      changeStyle(login, "valid")
       return true
     }
     else if(formRegex.phone.test(login.value)) {
-      changeStyle(login, validStyle)
+      changeStyle(login, "valid")
       return true
     }
 
-    changeStyle(login, invalidStyle)
+    changeStyle(login, "invalid")
     return false
   },
   title: (title) => {
@@ -232,4 +242,4 @@ const inputCheck: InputCheck = {
   },
 }
 
-export { formRegex, inputCheck, sexCheck, confirmCheck, showError, isFieldNull, isBoxNull, isObjEmpty }
+export { formRegex, inputCheck, sexCheck, confirmCheck, showError, isFieldNull, isBoxNull, changeStyle, isObjEmpty }

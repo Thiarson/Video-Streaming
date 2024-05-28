@@ -1,9 +1,31 @@
 import { createPortal } from "react-dom"
 import { motion } from "framer-motion"
+import type { FC } from "react"
 import type { MotionStyle } from "framer-motion"
 
 type Style = {
   popup: MotionStyle,
+}
+
+type PopupKey = keyof typeof popup
+
+type Props = {
+  type: PopupKey,
+}
+
+const popup = {
+  offline: {
+    message: "Vous êtes hors ligne !",
+    styles: {
+      backgroundColor: "#e74c3c",
+    },
+  },
+  success: {
+    message: "Effectué avec succès !",
+    styles: {
+      backgroundColor: "green",
+    }
+  }
 }
 
 const styles: Style = {
@@ -12,7 +34,7 @@ const styles: Style = {
     top: 3,
     width: "350px",
     textAlign: "center",
-    backgroundColor: "#e74c3c",
+    // backgroundColor: "#e74c3c",
     color: "#fff",
     padding: "10px 20px",
     borderRadius: "3px",
@@ -27,20 +49,25 @@ const popupVariants = {
   exit: { opacity: 0, y: -50, transition: { duration: 0.5 } },
 }
 
-function Offline() {
+const Popup: FC<Props> = ({ type }) => {
+  const popupStyles = {
+    ...styles.popup,
+    ...popup[type].styles,
+  }
+
   return createPortal(
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <motion.div
-        style={styles.popup}
+        style={popupStyles}
         variants={popupVariants}
         initial="hidden"
         animate="visible"
         exit="exit"
       >
-        Vous êtes hors ligne !
+        {popup[type].message}
       </motion.div>
     </div>,
   document.body)
 }
 
-export default Offline
+export default Popup

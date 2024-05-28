@@ -1,10 +1,11 @@
 const bcrypt = require("bcrypt")
+const Joi = require("joi")
 
 const prisma = require("../database/postgre/db")
 const tempStorage = require("../lib/temp-storage")
 const { sendMail } = require("../config/mail-config")
 const { generateJwtToken } = require("../lib/jwt-server")
-const { loginSchema, signupSchema } = require("../lib/data-validator")
+const { loginSchema, signupSchema, pattern } = require("../lib/data-validator")
 const { generateVerifCode } = require("../lib/code-generator")
 
 const authService = {}
@@ -132,6 +133,57 @@ authService.verifySession = async (userId) => {
   let user = await prisma.userInfo.findMany({
     where: { userId: userId },
   })
+
+  if(user.length !== 0)
+    return user[0]
+
+  throw new Error("User not found")
+}
+
+/**
+ * Handle forget password
+ */
+authService.forgetPassword = async (email) => {
+    // Verify email
+    const emailSchema = Joi.object({ email: pattern.email.required() })
+    const { error }= emailSchema.validate({ email: email })
+  
+    if (error)
+      throw new Error("Invalid data")
+  
+    // Verify validity of unique field contraint
+    let user = await prisma.userInfo.findMany({
+      where: { userEmail: email }
+    })
+  
+    if(user.length === 0)
+      throw new Error("Email not found")
+  
+    // Send verification code to user email
+    const code = generateVerifCode()
+    const subject = "Code de vérification"
+    const textMessage = `Voici le code de vérification de votre compte: ${code}`
+    const sent = sendMail(email, subject, textMessage)
+    console.log(code);
+  
+    // if (!sent)
+    //   throw new Error("Cannot send the e-mail")
+  
+    // Cache email and code in temporary database (Mongo)
+    tempStorage.set(email, { code: code }, 90)
+  
+    return code
+}
+
+/**
+ * Handle reset password
+ */
+authService.resetPassword = async (userData) => {
+  // Update user info from prisma
+  const user = await prisma.userInfo.update({
+    where: { userEmail: userData.userEmail },
+    data: { userPassword: userData.userPassword },
+  });
 
   if(user.length !== 0)
     return user[0]

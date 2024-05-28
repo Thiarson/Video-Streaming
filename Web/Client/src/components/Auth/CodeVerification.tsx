@@ -129,8 +129,8 @@ const CodeVerification: FC<Props> = ({ data, onClose, onRetry, onValid }) => {
               <p><button onClick={handleRetry} className="code-resend-link hover:underline">Renvoyer le code</button></p>
             </div>
             <div className="code-button-container">
-              <button className={`code-button ${status !== "idle" ? "code-disabled-button" : "bg-red-600 hover:bg-red-700 "}`} onClick={handleVerif}>Vérifier</button>
-              <button className=" code-button bg-zinc-500 hover:bg-zinc-600"onClick={handleClose}>Annuler</button>
+              <button className={`code-button ${status !== "idle" ? "code-disabled-button" : "bg-red-600 hover:bg-red-700 "} transition`} onClick={handleVerif}>Vérifier</button>
+              <button className=" code-button bg-zinc-500 hover:bg-zinc-600 transition"onClick={handleClose}>Annuler</button>
             </div>
           </div>
         </motion.div>

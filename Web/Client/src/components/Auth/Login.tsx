@@ -4,7 +4,7 @@ import { useQuery } from "react-query"
 import type { FormEvent } from "react"
 
 import Field from "../assets/Field"
-import Offline from "../assets/Offline"
+import Popup from "../assets/Popup"
 import Error from "../assets/Error"
 import DbError from "../assets/DbError"
 import InputError from "../assets/InputError"
@@ -89,7 +89,7 @@ function Login() {
         setUser(data)
         navigate("/home")
       } else {
-        !databaseError && setDatabaseError(true)
+        databaseError === false && setDatabaseError(true)
       }
     } catch (e) {
       console.error(e);
@@ -99,7 +99,7 @@ function Login() {
 
   return (
     <>
-      {query.isError && <Offline/>}
+      {query.isError && <Popup type="offline"/>}
       <div className="login-first-div scrollbar-hide">
         <div className="login-second-div">
           <h1 className="login-first-h1">Veuillez-vous connecter !</h1>
@@ -111,14 +111,14 @@ function Login() {
               {inputError["login"] && <InputError>{showError.input.login}</InputError>}
               <Field inputStyle="login-field focus:outline-none focus:ring-0 peer" type="password" name="password" ref={password}>Mot de passe</Field>
               {inputError["password"] && <InputError>{showError.input.password}</InputError>}
-              <button className={`login-button hover:bg-red-700 ${query.isLoading && "login-disabled-button"}`} type="submit">Se connecter</button>
+              <button className={`login-button hover:bg-red-700 ${query.isLoading && "login-disabled-button"} transition`} type="submit">Se connecter</button>
             </form>
             <p className="login-forget-password hover:underline"><Link to="/forget-password">Mot de passe oublié ?</Link></p>
           </div>
           <div className="login-fourth-div">
             <hr className="login-hr"/>
             <p className="login-new-paragraph">Vous êtes nouveau ?</p>
-            <Link style={{ width: "100%" }} to="/signup"><button className="login-signup-button hover:bg-red-700" type="submit">Créer un nouveau compte</button></Link>
+            <Link style={{ width: "100%" }} to="/signup"><button className="login-signup-button hover:bg-red-700 transition" type="submit">Créer un nouveau compte</button></Link>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
-import Home from './Main/Home'
-import Error from './assets/Error'
+import Home from "./Main/Home"
+import Error from "./assets/Error"
 
 function Navigation() {
   return (

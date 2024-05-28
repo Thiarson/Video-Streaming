@@ -12,6 +12,8 @@
   - Server Side Rendering
   - Migrate Server to Typescript
   - Mobile app
+  - 3D
+  - DevOps
   - A.I
   - DNS
 

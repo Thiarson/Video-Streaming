@@ -140,4 +140,54 @@ authRouter.post("/session-verif", auth, async function (req, res) {
   }
 })
 
+/** 
+ * Route for forget password
+ */
+authRouter.post("/forget-password", async function (req, res) {
+  try {
+    const { email } = req.body
+    const code = await authService.forgetPassword(email)
+
+    res.json({
+      success: true,
+      data: {
+        code: code,
+        email: email,
+      }
+    })
+  } catch (e) {
+    console.error(e.message);
+    res.json({
+      success: false,
+      data: null
+    })
+  }
+})
+
+/** 
+ * Route when reset password
+ */
+authRouter.post("/reset-password", async function (req, res) {
+  try {
+    const { email, password } = req.body
+    const userData = {
+      userEmail: email,
+      userPassword: bcrypt.hashSync(password, salt),
+    }
+
+    await authService.resetPassword(userData)
+
+    res.json({ 
+      success: true, 
+      data: null,
+    })
+  } catch (e) {
+    console.error(e.message);
+    res.json({
+      success: false,
+      data: null,
+    })
+  }
+})
+
 module.exports = authRouter

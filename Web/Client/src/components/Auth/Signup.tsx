@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "react-query"
 import type { FormEvent } from "react"
 
 import Field from "../assets/Field"
-import Offline from "../assets/Offline"
+import Popup from "../assets/Popup"
 import CodeVerification from './CodeVerification';
 import Error from "../assets/Error"
 import DbError from "../assets/DbError"
@@ -165,7 +165,7 @@ function Signup() {
         dispatch(openModal("codeVerif"))
         queryClient.resetQueries(queryCodeKey)
       } else {
-        !databaseError && setDatabaseError(true)
+        databaseError === false && setDatabaseError(true)
       }
     } catch (e) {
       console.error(e);
@@ -186,7 +186,7 @@ function Signup() {
         navigate("/home")
         queryClient.resetQueries(queryUserKey)
       } else {
-        !databaseError && setDatabaseError(true)
+        databaseError === false && setDatabaseError(true)
       }
     } catch (e) {
       console.error(e);
@@ -196,7 +196,7 @@ function Signup() {
 
   return (
     <>
-      {(queryCode.isError || queryUser.isError) && <Offline/>}
+      {(queryCode.isError || queryUser.isError) && <Popup type="offline"/>}
       {modal.codeVerif.isOpen && <CodeVerification data={code.current} onValid={queryUser.refetch} onRetry={queryCode.refetch} onClose={() => dispatch(closeModal("codeVerif"))}/>}
       <div className="signup-first-div">
         <div className="signup-second-div">
@@ -234,7 +234,7 @@ function Signup() {
                   {inputError["confirm"]  && <InputError>{showError.input.confirm}</InputError>}
                 </div>
               </div>
-              <button className={`signup-button hover:bg-red-700 transition ${queryCode.isLoading && "signup-disabled-button"}`} type="submit">S'inscrire</button>
+              <button className={`signup-button hover:bg-red-700 transition ${queryCode.isLoading && "signup-disabled-button"} transition`} type="submit">S'inscrire</button>
             </form>
             <p className="signup-paragraph">Vous avez déjà un compte ? <Link className="signup-login-link hover:underline" to='/login'>Veuillez-vous connecter ici !</Link></p>
           </div>

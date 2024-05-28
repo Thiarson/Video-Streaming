@@ -1,9 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
-import Login from './Auth/Login'
-import Signup from './Auth/Signup'
-import ForgetPassword from './Auth/ForgetPassword'
-import Error from './assets/Error'
+import Login from "./Auth/Login"
+import Signup from "./Auth/Signup"
+import ForgetPassword from "./Auth/ForgetPassword"
+import Error from "./assets/Error"
 
 function Authentication() {
   return (
