@@ -4,8 +4,9 @@
   "description": "Server for the video streaming application",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc",
-    "dev": "nodemon"
+    "build": "node build.js",
+    "dev": "nodemon",
+    "bundle": "webpack"
   },
   "author": "Thiarson",
   "license": "ISC",

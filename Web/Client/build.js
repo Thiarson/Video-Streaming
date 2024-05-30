@@ -3,7 +3,6 @@ const path = require("node:path")
 const { execSync } = require("node:child_process")
 
 try {
-  // execSync('npm run build', { stdio: 'inherit' })
   execSync('npx react-scripts build', { stdio: 'inherit' })
 
   const build = path.join(__dirname, 'build')
@@ -18,5 +17,5 @@ try {
 
   console.log('Build exécutée avec succès !');
 } catch (e) {
-  console.error("Erreur lord du build : ", e);
+  console.error("Erreur lors du build : ", e);
 }
