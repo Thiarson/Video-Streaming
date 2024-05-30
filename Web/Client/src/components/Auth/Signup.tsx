@@ -56,15 +56,15 @@ function Signup() {
   const formVerif = (): Info | null => {
     let signupData: Info | null = null
     let isFormValid = true
+    const checkBox = isBoxNull([ male.current, female.current ])
+    const confirmation = isFieldNull({ confirm: confirm.current, password: password.current }) as DynamicObject<string, HTMLInputElement>
     const inputs = isFieldNull({
       pseudo: pseudo.current,
       email: email.current,
       phone: phone.current,
       birth: birth.current,
       password: password.current,
-    })
-    const checkBox = isBoxNull([ male.current, female.current ])
-    const confirmation = isFieldNull({ confirm: confirm.current, password: password.current })
+    }) as DynamicObject<string, HTMLInputElement>
 
     isFormValid = isFormValid && sexCheck(checkBox)
     isFormValid = isFormValid && confirmCheck(confirmation)
@@ -116,14 +116,14 @@ function Signup() {
   }
 
   useEffect(() => {
+    const confirmation = isFieldNull({ confirm: confirm.current, password: password.current }) as DynamicObject<string, HTMLInputElement>
     const inputs = isFieldNull({
       pseudo: pseudo.current,
       email: email.current,
       phone: phone.current,
       birth: birth.current,
       password: password.current,
-    })
-    const confirmation = isFieldNull({ confirm: confirm.current, password: password.current })
+    }) as DynamicObject<string, HTMLInputElement>
 
     confirmation.confirm.onblur = () => {
       const inputValid = confirmCheck(confirmation)

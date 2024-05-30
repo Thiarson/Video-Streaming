@@ -55,8 +55,8 @@ const showError = {
   },
 }
 
-const isFieldNull = (fields: DynamicObject<string, HTMLInputElement | null>) => {
-  let inputs: DynamicObject<string, HTMLInputElement> = {}
+const isFieldNull = (fields: DynamicObject<string, HTMLElement | null>) => {
+  let inputs: DynamicObject<string, HTMLElement> = {}
 
   for (const [key, value] of Object.entries(fields)) {
     if (value === null)
@@ -80,13 +80,6 @@ const isBoxNull = (input: (HTMLInputElement | null)[]) => {
 
   return inputs
 }
-
-// const changeStyle = (element: HTMLElement, styles: Partial<CSSStyleDeclaration>) => {
-//   for (const [key, value] of Object.entries(styles)) {
-//     (element.style as any)[key] = value
-//   }
-// }
-
 
 const changeStyle = (element: HTMLElement, type: StyleType) => {
   for (const [key, value] of Object.entries(styles[type])) {
@@ -144,7 +137,7 @@ const inputCheck: InputCheck = {
       return false
     }
 
-    changeStyle(pseudo, "invalid")
+    changeStyle(pseudo, "valid")
     return true
   },
   email: (email) => {
@@ -205,20 +198,24 @@ const inputCheck: InputCheck = {
 
     return true
   },
-  // video: (video) => {
-  //   if(video.files.length === 0) {
-  //     return false
-  //   }
+  video: (video) => {
+    const { files } = video
 
-  //   return true
-  // },
-  // image: (image) => {
-  //   if(image.files.length === 0) {
-  //     return false
-  //   }
+    if(files === null || files.length === 0) {
+      return false
+    }
 
-  //   return true
-  // },
+    return true
+  },
+  image: (image) => {
+    const { files } = image
+
+    if(files === null || files.length === 0) {
+      return false
+    }
+
+    return true
+  },
   price: (price) => {
     if(!formRegex.price.test(price.value)) {
       return false

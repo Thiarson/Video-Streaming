@@ -1,13 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = {
-  codeVerif: {
-    isOpen: false,
-  },
-}
-
 type ModalKey = keyof typeof initialState
 type SliceState = typeof initialState
+
+const initialState = {
+  codeVerif: { isOpen: false },
+  uploadVideo: { isOpen: false },
+}
 
 const handleOpenModal = (state: SliceState, action: { type: string, payload: ModalKey }) => {
   const key = action.payload

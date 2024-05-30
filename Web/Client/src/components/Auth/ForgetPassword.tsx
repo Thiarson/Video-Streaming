@@ -6,7 +6,7 @@ import type { FC, FormEvent } from "react"
 
 import Field from "../assets/Field"
 import ResetPassword from "./ResetPassword"
-import CodeVerification from "./CodeVerification";
+import CodeVerification from "./CodeVerification"
 import Popup from "../assets/Popup"
 import Error from "../assets/Error"
 import DbError from "../assets/DbError"
@@ -19,6 +19,7 @@ import { responseSchema } from "../utils/data-validator"
 import type { RootState } from "../utils/context/store"
 import type { Code } from "../utils/types/data"
 import type { FetchCodeResponse } from "../utils/types/fetch"
+import { DynamicObject } from '../utils/types/object'
 
 import "../styles/Auth/ForgetPassword.css"
 
@@ -42,7 +43,7 @@ const ForgetPassword: FC = () => {
   const handleEmailVerif = (e: FormEvent) => {
     e.preventDefault()
     
-    const inputs = isFieldNull({ email: email.current})
+    const inputs = isFieldNull({ email: email.current}) as DynamicObject<string, HTMLInputElement>
 
     if (!inputCheck["email"](inputs.email)) {
       setInputError("email", true)

@@ -1,0 +1,59 @@
+.menu-account-first-container {
+  width: 208px;
+  display: flex;
+  flex-direction: column;
+  position:absolute;
+  top: 60px;
+  right: 8px;
+  padding-top: 8px;
+  padding-bottom: 16px;
+  background-color: black;
+  border-width: 2px;
+  border-radius: 8px;
+  border-color: rgb(31, 41 , 55);
+}
+
+.menu-account-box-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-account-first-box {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.menu-account-profil-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+}
+
+.menu-account-profil-paragraph {
+  color: rgb(161 161 170);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;  
+}
+
+.menu-account-hr {
+  border-width: 0;
+  height: 1px;
+  background-color: rgb(75, 85, 99);
+}
+
+.menu-account-second-box {
+  display: flex;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: rgb(161, 161, 170);
+  padding: 0 12px;
+  cursor: pointer;
+}

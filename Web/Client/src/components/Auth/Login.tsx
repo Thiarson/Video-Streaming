@@ -41,7 +41,7 @@ function Login() {
     const inputs= isFieldNull({
       login: login.current,
       password: password.current,
-    })
+    }) as DynamicObject<string, HTMLInputElement>
 
     for (const input in inputs) {
       const inputValid = inputCheck[input](inputs[input])

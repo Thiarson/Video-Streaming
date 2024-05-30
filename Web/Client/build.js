@@ -3,12 +3,12 @@ const path = require("node:path")
 const { execSync } = require("node:child_process")
 
 try {
-  execSync('npm run build', { stdio: 'inherit' })
+  // execSync('npm run build', { stdio: 'inherit' })
+  execSync('npx react-scripts build', { stdio: 'inherit' })
 
   const build = path.join(__dirname, 'build')
   const web = path.dirname(__dirname)
-  const root = path.dirname(web)
-  const clientDir = path.join(root, 'Server/src/public/client')
+  const clientDir = path.join(web, 'Server/public/client')
 
   console.log('Removing public directory...')
   fs.rmSync(clientDir, { recursive: true, force: true })

@@ -58,4 +58,4 @@ const fetchServer = {
   }
 }
 
-export { fetchServer }
+export { fetchServer, baseURL }
