@@ -88,6 +88,7 @@ function Login() {
         storage.set("token", token)
         setUser(data)
         navigate("/home")
+        window.location.replace("/home")
       } else {
         databaseError === false && setDatabaseError(true)
       }

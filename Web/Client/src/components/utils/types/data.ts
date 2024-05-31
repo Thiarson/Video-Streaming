@@ -2,10 +2,13 @@ import { FC } from "react"
 
 export type User = {
   userId: string,
+  userSex: string,
   userPseudo: string,
+  userPhone: string,
   userEmail: string,
   userWallet: string,
-  userBio: string,
+  userBirthDate: Date,
+  userBio: string | null,
   userPhoto: string,
   userPassword: string,
 }
@@ -26,7 +29,26 @@ export type Video = {
 }
 
 export type Direct = {
+  directId: string,
+  userId: string,
+  directTitle: string,
+  directDescription: string,
+  directThumbnail: string,
+  directUrl: string,
+  directDate: Date,
+  directDuration: string,
+  directPrice: string,
+  directInProgress: boolean | null,
+  directKey: string,
+  isValid: string,
+}
 
+export type Playlist = {
+  playlistId: string,
+  userId: string,
+  playlistTitle: string,
+  playlistDescription: string,
+  videoCount: number,
 }
 
 export type Code = {

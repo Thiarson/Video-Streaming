@@ -47,12 +47,40 @@ module.exports = (app: Express) => {
     res.sendFile(path.join(client, 'index.html'))
   });
 
-  app.get("/static/js/main.*.js", (req, res) => {
-    res.sendFile(path.join(client, req.url))
+  app.get("/static/js/*", (req, res) => {
+    try {
+      const js = path.join(client, req.url)
+    
+      if (!fs.existsSync(js))
+        throw new Error("This ressource is unavailabe")
+
+      res.sendFile(js)
+    } catch (e) {
+      if (e instanceof Error)
+        console.error(e.message);
+      else
+        console.error(`Unepected error: ${e}`);
+        
+      res.sendFile(path.join(client, 'index.html'))
+    }
   });
 
-  app.get("/static/css/main.*.css", (req, res) => {
-    res.sendFile(path.join(client, req.url))
+  app.get("/static/css/*", (req, res) => {
+    try {
+      const css = path.join(client, req.url)
+    
+      if (!fs.existsSync(css))
+        throw new Error("This ressource is unavailabe")
+
+      res.sendFile(css)
+    } catch (e) {
+      if (e instanceof Error)
+        console.error(e.message);
+      else
+        console.error(`Unepected error: ${e}`);
+        
+      res.sendFile(path.join(client, 'index.html'))
+    }
   });
 
   app.get("/manifest.json", (req, res) => {

@@ -7,11 +7,14 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa"
 import type { FC } from "react"
 
 import SortContent from "./MenuSortContent"
+import { useMenu } from "../utils/context/menu"
+import { baseURL } from "../utils/fetch-server"
+import { useClient } from "../utils/context/client"
 
 import "../styles/Main/Navbar.css"
-import { useMenu } from "../utils/context/menu"
 
 const Navbar: FC = () => {
+  const { user } = useClient()
   const { Menu, toggleMenu } = useMenu()
 
   const toggleSortContent = () => toggleMenu("sortContent")
@@ -63,7 +66,7 @@ const Navbar: FC = () => {
             <FiBell size={22}/>
           </div>
           <div className="navbar-profil-box" onClick={toggleAccountMenu}>
-            <img className="navbar-profil-image" src="" alt="Profil"/>
+            <img className="navbar-profil-image" src={baseURL+user?.userPhoto} alt="Profil"/>
           </div>
           <Menu/>
         </div>

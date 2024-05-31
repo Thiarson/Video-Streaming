@@ -6,6 +6,7 @@ type SliceState = typeof initialState
 const initialState = {
   codeVerif: { isOpen: false },
   uploadVideo: { isOpen: false },
+  info: { isOpen: false },
 }
 
 const handleOpenModal = (state: SliceState, action: { type: string, payload: ModalKey }) => {

@@ -108,7 +108,7 @@ authRouter.post("/login", async function (req, res) {
         });
     }
 });
-authRouter.post("/session-verif", auth_1.default, async function (req, res) {
+authRouter.get("/session-verif", auth_1.default, async function (req, res) {
     try {
         const { data } = req.body;
         const user = await auth_service_1.default.verifySession(data);

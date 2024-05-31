@@ -11,6 +11,8 @@ import { closeModal } from "../utils/features/modal"
 import { useClient } from "../utils/context/client"
 import type { DynamicObject } from "../utils/types/object"
 
+import "../styles/Main/UploadVideo.css"
+
 function UploadVideo() {
   const dispatch = useDispatch()
   const playlist = useRef<HTMLSelectElement>(null)
@@ -147,53 +149,53 @@ function UploadVideo() {
   }
 
   return (
-    <div className="text-white z-50 transition duration-300 bg-zinc-700 bg-opacity-80 overflow-x-hidden overflow-y-auto fixed inset-0">
-      <div className="w-full h-full flex flex-col justify-center items-center">
-        <div className="w-[440px] bg-zinc-900 px-12 pt-8 rounded-t-md relative">
-          <div className="cursor-pointer absolute top-3 right-3 h-8 w-8 rounded-full bg-black bg-opacity-70 flex items-center justify-center" onClick={handleClose}>
-            <AiOutlineClose className="text-white" size={20}/>
+    <div className="upload-video-first-container transition">
+      <div className="upload-video-second-container">
+        <div className="upload-video-first-box">
+          <div className="upload-video-close" onClick={handleClose}>
+            <AiOutlineClose style={{ color: "white" }} size={20}/>
           </div>
-          <h1 className="text-3xl mb-4 font-semibold">Ajout de vidéo</h1>
+          <h1 className="upload-video-title">Ajout de vidéo</h1>
           <hr/>
         </div>
-        <div className="h-[70%] bg-zinc-900 px-12 pt-6 pb-8 rounded-b-md relative overflow-y-scroll scrollbar-hide">
-          <form className="flex flex-col gap-4" onSubmit={handleUpload}>
-            <div className="relative">
-              <select className="block rounded-md px-6 pt-6 w-full h-14 text-md bg-neutral-700 focus:outline-none focus:ring-0 peer cursor-pointer" name="playlist" id="playlist" ref={playlist}>
+        <div className="upload-video-second-box scrollbar-hide">
+          <form className="upload-video-form" onSubmit={handleUpload}>
+            <div style={{ position: "relative" }}>
+              <select className="upload-video-playlist-option focus:outline-none focus:ring-0 peer" name="playlist" id="playlist" ref={playlist}>
                 <option value="">Aucune</option>
                 {/* {playlists.map((playlist) => <option key={playlist.playlist_id} value={playlist.playlist_id}>{playlist.playlist_title}</option>)} */}
               </select>
-              <label className="absolute text-md text-zinc-400 duration-150 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="playlist">Playlist</label>
+              <label className="upload-video-playlist-label -translate-y-3 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="playlist">Playlist</label>
             </div>
             {inputError["playlist"] && <InputError>{showError.input.playlist}</InputError>}
             <Field type="text" name="title" defaultValue="Titre" ref={title}>Titre</Field>
             {inputError["title"] && <InputError>{showError.input.title}</InputError>}
-            <div className="relative">
-              <textarea className="block rounded-md px-6 pt-6 w-full h-24 text-md bg-neutral-700 focus:outline-none focus:ring-0 peer scrollbar-hide" placeholder=" " name="description" id="description" cols={25} rows={2} defaultValue="Description de la vidéo !!!" ref={description}></textarea>
-              <label className="absolute text-md text-zinc-400 duration-150 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="description">Description</label>
+            <div style={{ position: "relative" }}>
+              <textarea className="upload-video-description focus:outline-none focus:ring-0 peer scrollbar-hide" placeholder=" " name="description" id="description" cols={25} rows={2} defaultValue="Description de la vidéo !!!" ref={description}></textarea>
+              <label className="upload-video-description-label transform -translate-y-3 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="description">Description</label>
             </div>
             {inputError["description"] && <InputError>{showError.input.description}</InputError>}
-            <div className="relative">
-              <select className="block rounded-md px-6 pt-6 w-full h-14 text-md bg-neutral-700 focus:outline-none focus:ring-0 peer cursor-pointer" name="category" id="category" ref={category}>
+            <div style={{ position: "relative" }}>
+              <select className="upload-video-category-select focus:outline-none focus:ring-0 peer" name="category" id="category" ref={category}>
                 {videoSpec.categories.map((category) => <option key={category} value={category}>{category}</option>)}
               </select>
-              <label className="absolute text-md text-zinc-400 duration-150 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="category">Catégorie</label>
+              <label className="upload-video-category-label transform -translate-y-3 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="category">Catégorie</label>
             </div>
             {inputError["category"] && <InputError>{showError.input.category}</InputError>}
-            <div className="relative">
-              <select className="block rounded-md px-6 pt-6 w-full h-14 text-md bg-neutral-700 focus:outline-none focus:ring-0 peer cursor-pointer" name="duration" id="duration" ref={duration}>
+            <div style={{ position: "relative" }}>
+              <select className="upload-video-duration-select focus:outline-none focus:ring-0 peer" name="duration" id="duration" ref={duration}>
                 {directSpec.durations.map((duration) => <option key={duration.time} value={duration.value}>{duration.time}</option>)}
               </select>
-              <label className="absolute text-md text-zinc-400 duration-150 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="duration">Durée</label>
+              <label className="upload-video-duration-label transform -translate-y-3 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="duration">Durée</label>
             </div>
             {inputError["duration"] && <InputError>{showError.input.duration}</InputError>}
             <Field type="text" name="price" defaultValue="0" ref={price}>Prix</Field>
             {inputError["price"] && <InputError>{showError.input.price}</InputError>}
             <div>
-              <input className="block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neutral-700 file:text-white hover:file:bg-neutral-600 file:cursor-pointer" type="file" accept="video/*" name="file" id="file" ref={video}/>
+              <input className="upload-video-file file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neutral-700 file:text-white hover:file:bg-neutral-600 file:cursor-pointer" type="file" accept="video/*" name="file" id="file" ref={video}/>
             </div>
             {inputError["video"] && <InputError>{showError.input.video}</InputError>}
-            <button className="bg-red-600 py-3 font-semibold rounded-md w-full mt-5 hover:bg-red-700 transition">Envoyer</button>
+            <button className="upload-video-button hover:bg-red-700 transition">Envoyer</button>
           </form>
         </div>
       </div>

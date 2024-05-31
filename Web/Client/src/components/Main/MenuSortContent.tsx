@@ -3,27 +3,24 @@ import type { FC, PropsWithChildren } from "react"
 import "../styles/Main/MenuSortContent.css"
 
 const SortContent: FC = () => {
+  const firstBox = [ "Tout", "Vente", "Acquise", "Gratuit" ]
+  const secondBox = [ "Video", "Direct", "Rediffusion", "Autres" ]
+
   return (
     <div className="menu-sort-first-container">
       <div className="menu-sort-box-container">
         <div className="menu-sort-box">
-          <Items>Tout</Items>
-          <Items>Vente</Items>
-          <Items>Acquise</Items>
-          <Items>Gratuit</Items>
+          {firstBox.map((item) => <Item>{item}</Item>)}
         </div>
         <div className="menu-sort-box">
-          <Items>Direct</Items>
-          <Items>Rediffusion</Items>
-          <Items>Musique</Items>
-          <Items>Education</Items>
+          {secondBox.map((item) => <Item>{item}</Item>)}
         </div>
       </div>
     </div>
   )
 }
 
-const Items: FC<PropsWithChildren> = ({ children }) => {
+const Item: FC<PropsWithChildren> = ({ children }) => {
   return (
     <button className="hover:underline" onClick={undefined}>{children}</button>
   )

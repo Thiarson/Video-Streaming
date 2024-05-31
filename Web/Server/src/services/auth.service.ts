@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt"
 import Joi from "joi"
+import type { UserInfo as User } from "@prisma/client"
 
 import prisma from "../database/postgre/db"
 import tempStorage from "../lib/temp-storage"
@@ -8,7 +9,7 @@ import { generateJwtToken } from "../lib/jwt-server"
 import { loginSchema, signupSchema, pattern } from "../lib/data-validator"
 import { generateVerifCode } from "../lib/code-generator"
 import type { DynamicObject } from "../utils/types/object"
-import { Code, User } from "../utils/types/data"
+import type { Code } from "../utils/types/data"
 
 const authService: DynamicObject<string, Function> = {}
 

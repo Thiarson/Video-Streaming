@@ -25,8 +25,8 @@ import type { RootState } from "../utils/context/store"
 import "../styles/Auth/Signup.css"
 
 function Signup() {
-  const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch()
   const male = useRef<HTMLInputElement>(null)
   const female = useRef<HTMLInputElement>(null)
@@ -184,6 +184,7 @@ function Signup() {
         storage.set("token", token)
         setUser(data)
         navigate("/home")
+        window.location.replace("/home")
         queryClient.resetQueries(queryUserKey)
       } else {
         databaseError === false && setDatabaseError(true)

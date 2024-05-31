@@ -128,7 +128,7 @@ authRouter.post("/login", async function (req, res) {
 /** 
  * Route to verify session
  */
-authRouter.post("/session-verif", auth, async function (req, res) {
+authRouter.get("/session-verif", auth, async function (req, res) {
   try {
     const { data } = req.body        
     const user = await authService.verifySession(data)

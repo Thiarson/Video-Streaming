@@ -1,0 +1,162 @@
+.upload-video-first-container {
+  position: fixed;
+  color: white;
+  background-color: rgba(63, 63, 70, 0.8);
+  inset: 0px;
+  overflow-y: auto;
+  transition-duration: 300ms;
+  z-index: 50;
+}
+
+.upload-video-second-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-video-first-box {
+  position: relative;
+  width: 440px;
+  padding: 0 48px;
+  padding-top: 32px;
+  background-color: rgb(24, 24, 27);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.upload-video-close {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.upload-video-title {
+  margin-bottom: 16px;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 36px;
+}
+
+.upload-video-second-box {
+  position: relative;
+  width: 440px;
+  height: 70%;
+  background-color: rgb(24, 24, 27);
+  padding: 24px 48px 32px 48px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow-y: scroll;
+}
+
+.upload-video-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-video-playlist-option {
+  display: block;
+  width: 100%;
+  height: 56px;
+  padding: 24px 24px 0 24px;
+  background-color: rgb(64, 64, 64);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.upload-video-playlist-label {
+  position: absolute;
+  color: rgb(161, 161, 170);
+  top: 16px;
+  left: 24px;
+  transition-duration: 150ms;
+  transform-origin: 0;
+  z-index: 10;
+}
+
+.upload-video-description {
+  display: block;
+  width: 100%;
+  height: 96px;
+  padding: 24px 24px 0 24px;
+  background-color: rgb(64, 64, 64);
+  border-radius: 6px;
+}
+
+.upload-video-description-label {
+  position: absolute;
+  color: rgb(161, 161, 170);
+  transition-duration: 150ms;
+  top: 16px;
+  left: 24px;
+  transform-origin: 0;
+  z-index: 10;
+}
+
+.upload-video-category-select {
+  display: block;
+  width: 100%;
+  height: 56px;
+  padding: 24px 24px 0 24px;
+  background-color: rgb(64, 64, 64);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.upload-video-category-label {
+  position: absolute;
+  color: rgb(161, 161, 170);
+  top: 16px;
+  left: 24px;
+  transition-duration: 150ms;
+  transform-origin: 0;
+  z-index: 10;
+}
+
+.upload-video-duration-select {
+  display: block;
+  width: 100%;
+  height: 56px;
+  padding: 24px 24px 0 24px;
+  background-color: rgb(64, 64, 64);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.upload-video-duration-label {
+  position: absolute;
+  color: rgb(161, 161, 170);
+  top: 16px;
+  left: 24px;
+  transition-duration: 150ms;
+  transform-origin: 0;
+  z-index: 10;
+}
+
+.upload-video-file {
+  display: block;
+  width: 100%;
+  color: rgb(161, 161, 170);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.upload-video-button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px 0;
+  font-weight: 600;
+  background-color: rgb(220, 38, 38);
+  border-radius: 6px;
+}

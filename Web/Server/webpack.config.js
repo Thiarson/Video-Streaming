@@ -1,17 +1,17 @@
-import path from "node:path";
+const path = require("node:path")
 
 module.exports = {
+  // watch: true,
   entry: "./src/index.ts",
-  watch: true,
   output: {
     path: path.resolve("./dist"),
     filename: "server.js",
   },
   resolve: {
-    extension: [ "js", "ts", "jsx", "tsx" ]
+    extensions: [ ".js", ".ts", ".jsx", ".tsx" ],
   },
   module: {
-    rule: [
+    rules: [
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
@@ -23,6 +23,9 @@ module.exports = {
         use: ["babel-loader"],
       }
     ]
+  },
+  stats: {
+    errorDetails: true
   },
   mode: "production"
 }

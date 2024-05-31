@@ -5,7 +5,7 @@ import type { FetchOptions, FetchCodeResponse, FetchUserResponse } from "../type
 
 type Response = FetchUserResponse | FetchCodeResponse
 
-type Fetch = (url: string, options: FetchOptions) => { loading: boolean, response: Response, errors: any }
+type Fetch = (url: string, options?: FetchOptions) => { loading: boolean, response: Response, errors: any }
 
 const useFetch: Fetch = (url, options = {}) => {
   const [ loading, setLoading ] = useState(true)
@@ -13,7 +13,7 @@ const useFetch: Fetch = (url, options = {}) => {
   const [ errors, setErrors ] = useState<any>()
   
   useEffect(() => {
-    fetchServer.post(url, options)
+    fetchServer.get(url, options)
       .then((data) => {
         setData(data);
       })

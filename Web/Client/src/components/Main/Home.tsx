@@ -1,15 +1,28 @@
-import { Fragment, Reducer, useEffect, useReducer, type FC } from "react"
+import { Fragment, useEffect, useReducer, useRef, useState } from "react"
 import { useSelector } from "react-redux"
+import type { FC, Reducer } from "react"
 
 import Navbar from "./Navbar"
 import UploadVideo from "./UploadVideo"
 import SortContent from "./MenuSortContent"
 import CreateContent from "./MenuCreateContent"
 import Account from "./MenuAccount"
-import { MenuProvider } from "../utils/context/menu"
-import type { HomeMenu, HomeMenuType } from "../utils/types/data"
-import type { RootState } from "../utils/context/store"
 import Carousel from "./Carousel"
+import Info from "./Info"
+import VideoList from "./VideoList"
+import Loading from "../assets/Loading"
+import Error from "../assets/Error"
+import storage from "../utils/local-storage"
+import { useQuery, useQueryClient } from "react-query"
+import { fetchServer } from "../utils/fetch-server"
+import { MenuProvider } from "../utils/context/menu"
+import { InfoProvider } from "../utils/context/info"
+import type { Direct, HomeMenu, HomeMenuType, User, Video } from "../utils/types/data"
+import type { RootState } from "../utils/context/store"
+import type { FetchAllContentResponse } from "../utils/types/fetch"
+import type { DynamicObject } from "../utils/types/object"
+
+type VideoCategory = DynamicObject<string, (Video | Direct)[]>
 
 const menus: HomeMenu = {
   none: Fragment,
@@ -26,98 +39,105 @@ const reducer: Reducer<FC, keyof HomeMenuType> = (state, type) => {
 }
 
 const Home: FC = () => {
+  const queryClient = useQueryClient()
   const modal = useSelector((store: RootState) => store.modal)
+  const categories = useRef<VideoCategory>({})
+  const isVideoBuyed = useRef<DynamicObject<string, boolean>>({})
+  const users = useRef<DynamicObject<string, User>>({})
   const [ Menu, dispatch ] = useReducer(reducer, Fragment)
-  // const showStore = (filter = null, search = '') => {
-  //   const list = []
+  const [ info, setInfo ] = useState(null)
+  
+  const queryKey = ["all-content"]
+  const query = useQuery(queryKey, () => {
+    return fetchServer.get("/api/all-content")
+  }, { cacheTime: 0, enabled: false })
 
-  //   for (const category in directList) {
-  //     if(directList[category].length !== 0) {
-  //       list.push(<DirectList key={category} data={directList[category]} directPurchased={directPurchased} openInfoModal={openInfoModal} isPurchased={setPurchased} setBuyDirect={setBuyVideo} setDirect={setVideo} search={search}>{filter}</DirectList>)
-  //     }
-  //   }
+  document.body.style.overflowY = ""
 
-  //   for (const category in videoList) {
-  //     if(videoList[category].length !== 0) {
-  //       list.push(<MovieList key={category} data={videoList[category]} category={category} videoPurchased={videoPurchased} openInfoModal={openInfoModal} isPurchased={setPurchased} setBuyVideo={setBuyVideo} setVideo={setVideo} search={search}>{filter}</MovieList>)
-  //     }
-  //   }
+  for (const [, value] of Object.entries(modal)) {
+    if (value.isOpen) {
+      document.body.style.overflowY = "clip"
+      break
+    }
+  }
 
-  //   return list
-  // }
+  const contentList = () => {
+    const list = []
 
-  // const showCategory = (filter) => {
-  //   const list = []
+    for (const category in categories.current) {
+      const videos = categories.current[category] as Video[]
 
-  //   if(filter === 'Direct') {
-  //     for (const category in directList) {
-  //       if(directList[category].length !== 0) {
-  //         list.push(
-  //           <div className="mt-4">
-  //             <p className="text-white text-2xl font-semibold font-mono px-12">Direct</p>
-  //             <div className="flex flex-wrap items-center px-12 py-4 gap-4 relative transition-all">
-  //               {directList[category].map((direct) => (
-  //                 !directPurchased[direct.directId] ? <DirectCard key={direct.directId} direct={direct} directPurchased={directPurchased} openInfoModal={openInfoModal} isPurchased={setPurchased} setBuyDirect={setBuyVideo} setDirect={setVideo} reverse={true}/> : null
-  //               ))}
-  //             </div>
-  //           </div>
-  //         )
-  //       }
-  //     }
-  //   }
-  //   else {
-  //     for (const category in videoList) {
-  //       let result = null
+      if(videos.length === 0)
+        return null
 
-  //       if(videoList[category].length !== 0 && category === filter) {
-  //         result = videoList[category].map((video) => {
-  //         const ID = video.videoId !== null ? video.videoId : video.directId
+      list.push(<VideoList key={category} videoList={videos} category={category}/>)
+    }
 
-  //         return (
-  //           !videoPurchased[ID] ? <MovieCard key={ID} movie={video} category={category} openInfoModal={openInfoModal} videoPurchased={videoPurchased} isPurchased={setPurchased} buyVideo={setBuyVideo} video={setVideo}/> : null
-  //         )})
-
-  //         list.push(
-  //           <div className="mt-4">
-  //             <h1 className="text-white text-2xl font-semibold font-mono pl-12 pr-6">{category}</h1>
-  //             <div className="flex flex-wrap px-12 py-4 gap-4 transition-all duration-500 relative">
-  //               {result}
-  //             </div>
-  //           </div>
-  //         )
-  //       }
-  //     }
-  //   }
-
-  //   return list
-  // }
-
+    return list
+  }
+  
   useEffect(() => {
-
+    query.refetch()
   }, [])
+  
+  if (storage.token === null)
+    return <Loading/>
+
+  if (query.isError)
+    console.error(query.error);
+
+  if (query.isSuccess) {
+    try {
+      const response = query.data as FetchAllContentResponse
+      const { success, data } = response
+      
+      // responseSchema.parse(response)
+
+      if (success && data) {
+        // Trier les videos par catégories        
+        users.current = data.users
+        isVideoBuyed.current = data.isVideoBuyed
+        data.videos.forEach((video) => {
+          const { videoCategory: category } = video
+
+          if (!categories.current[category])
+            categories.current[category] = []
+
+          categories.current[video.videoCategory].push(video)
+        })
+
+        // categories.current["Rediffusion"] = []
+        // data.rediffusion.forEach((rediff) => categories.current["Rediffusion"].push(rediff))
+
+        queryClient.resetQueries(queryKey)
+      }
+    } catch (e) {
+      console.error(e);
+      return <Error code="502" action="reload">Réessayer</Error>
+    }    
+  }
+
+  const video = contentList()
+  const infoValue = {
+    video: info,
+    setVideo: setInfo,
+    users: users.current,
+    isVideoBuyed: isVideoBuyed.current,
+  }
 
   return (
     <MenuProvider value={{ Menu, toggleMenu: dispatch }}>
+    <InfoProvider value={infoValue}>
       {modal.uploadVideo.isOpen && <UploadVideo/>}
+      {/* {modal.programDirect.isOpen && <ProgramDirect/>} */}
+      {modal.info.isOpen && <Info/>}
+      {/* {modal.buyVideo.isOpen && <BuyVideo/>} */}
       <Navbar/>
       <Carousel/>
+      <div className="pb-24">{video}</div>
+    </InfoProvider>
     </MenuProvider>
   )
-
-  // return (
-  //   <>
-  //     <Navbar uploadVideo={setUploadVideo} programDirect={setProgramDirect} setFilter={dispatch} setSearch={setSearch}/>
-  //     <UploadVideo visible={uploadVideo} onClose={setUploadVideo} playlists={playlists}/>
-  //     <ProgramDirect visible={programDirect} onClose={setProgramDirect}/>
-  //     <InfoModal visible={modal} info={infoModal} purchased={purchased} buyVideo={setBuyVideo} video={setVideo} onClose={closeInfoModal} users={users} allPlaylist={allPlaylist}/>
-  //     <BuyVideo visible={buyVideo} video={video} onClose={setBuyVideo} isModalOpen={modal} closeInfoModal={closeInfoModal}/>
-  //     <Carousel openInfoModal={openInfoModal} isPurchased={setPurchased} buyVideo={setBuyVideo} video={setVideo}/>
-  //     {/* <Billboard onOpen={setModal}/> */}
-  //     <div className="pb-24">
-  //       {show}
-  //     </div>
-  //   </>
-  // )
 }
 
 export default Home

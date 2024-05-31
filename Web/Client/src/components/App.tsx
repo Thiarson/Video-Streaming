@@ -14,9 +14,7 @@ import type { FetchUserResponse } from "./utils/types/fetch"
 function App() {
   const [ sessionVerif, setSessionVerif] = useState(false)
   const [ user, setUser ] = useState<User | null>(null)
-
-  const headers = { "Authorization": `Bearer ${storage.token}` }
-  const { loading, response, errors } = useFetch("/api/session-verif", { headers: headers })
+  const { loading, response, errors } = useFetch("/api/session-verif")
 
   if (errors)
     return <Error code="503" action="reload">Réessayer</Error>
@@ -39,6 +37,7 @@ function App() {
   }
 
   const Component = user === null ? Authentication : Navigation
+  document.body.style.backgroundColor = user ? "rgb(212 212 216)" : "white"
 
   return (
     <ClientProvider value={{ user, setUser }}>

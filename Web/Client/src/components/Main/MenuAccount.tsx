@@ -5,6 +5,7 @@ import type { FC } from "react"
 import storage from "../utils/local-storage"
 import { useClient } from "../utils/context/client"
 import { useMenu } from "../utils/context/menu"
+import { baseURL } from "../utils/fetch-server"
 
 import "../styles/Main/MenuAccount.css"
 
@@ -28,7 +29,7 @@ const Account: FC = () => {
     <div className="menu-account-first-container">
       <div className="menu-account-box-container">
         <div className="menu-account-first-box group/item" onClick={profil}>
-          <img className="menu-account-profil-image" src="" alt="Profil" />
+          <img className="menu-account-profil-image" src={baseURL+user?.userPhoto} alt="Profil" />
           <p className="menu-account-profil-paragraph group-hover/item:underline">
             {user?.userPseudo}
           </p>
