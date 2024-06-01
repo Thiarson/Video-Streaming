@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux"
 import { useQuery, useQueryClient } from "react-query"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { AiOutlineInfoCircle } from "react-icons/ai"
+import type { VideoContent } from "@prisma/client"
 
 import Button from "../assets/Button"
 import Popup from "../assets/Popup"
@@ -11,7 +12,6 @@ import Invalid from "../assets/Error"
 import { baseURL, fetchServer } from "../utils/fetch-server"
 import { openModal } from "../utils/features/modal"
 import { useInfo } from "../utils/context/info"
-import type { Video } from "../utils/types/data"
 import type { DynamicObject } from "../utils/types/object"
 import type { FetchVideoResponse } from "../utils/types/fetch"
 
@@ -20,7 +20,7 @@ function Carousel() {
   const dispatch = useDispatch()
   const queryClient = useQueryClient()
   const info = useRef("")
-  const slides = useRef<Video[]>([])
+  const slides = useRef<VideoContent[]>([])
   const videoBuyed = useRef<DynamicObject<string, boolean>>({})
   const [ video, setVideo ] = useState(0)
   const { setVideo: setInfo } = useInfo()

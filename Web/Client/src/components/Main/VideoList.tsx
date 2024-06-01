@@ -1,13 +1,13 @@
 import { useRef, useState } from "react"
 import { MdChevronLeft, MdChevronRight } from "react-icons/md"
 import type { FC } from "react"
+import type { VideoContent } from '@prisma/client'
 
 import VideoCard from "./VideoCard"
 import { useInfo } from "../utils/context/info"
-import type { Video } from "../utils/types/data"
 
 type Props = {
-  videoList: Video[],
+  videoList: VideoContent[],
   category: string,
 }
 

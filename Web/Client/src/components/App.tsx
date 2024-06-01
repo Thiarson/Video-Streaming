@@ -1,4 +1,5 @@
 import { useState } from "react"
+import type { UserInfo } from "@prisma/client"
 
 import Authentication from "./Authentication"
 import Navigation from "./Navigation"
@@ -8,12 +9,11 @@ import storage from "./utils/local-storage"
 import { useFetch } from "./utils/hooks/useFetch"
 import { ClientProvider } from "./utils/context/client"
 import { responseSchema } from "./utils/data-validator"
-import type { User } from "./utils/types/data"
 import type { FetchUserResponse } from "./utils/types/fetch"
 
 function App() {
   const [ sessionVerif, setSessionVerif] = useState(false)
-  const [ user, setUser ] = useState<User | null>(null)
+  const [ user, setUser ] = useState<UserInfo | null>(null)
   const { loading, response, errors } = useFetch("/api/session-verif")
 
   if (errors)

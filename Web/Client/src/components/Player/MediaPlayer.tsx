@@ -1,18 +1,19 @@
 import Hls from "hls.js"
-import { FC, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { Link, useParams } from "react-router-dom"
 import { BsArrowLeft } from "react-icons/bs"
 import { useQuery, useQueryClient } from "react-query"
+import type { FC } from "react"
+import type { VideoContent } from "@prisma/client"
 
 import Invalid from "../assets/Error"
 import { baseURL, fetchServer } from "../utils/fetch-server"
-import type { Video } from "../utils/types/data"
 
 const MediaPlayer: FC= () => {
   const queryClient = useQueryClient()
   const hls = useRef<Hls>()
   const player = useRef<HTMLVideoElement>(null)
-  const video = useRef<Video>()
+  const video = useRef<VideoContent>()
   const { videoId } = useParams()
 
   const queryKey = ["get-video"]
@@ -29,7 +30,7 @@ const MediaPlayer: FC= () => {
 
   if (query.isSuccess) {
     try {
-      const response = query.data as { success: boolean, data: { video: Video, isFree: boolean, isBuyed: boolean, isOwned: boolean }}
+      const response = query.data as { success: boolean, data: { video: VideoContent, isFree: boolean, isBuyed: boolean, isOwned: boolean }}
       const { success, data } = response
 
       // responseSchema.parse(response)

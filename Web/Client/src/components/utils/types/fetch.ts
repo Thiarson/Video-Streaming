@@ -1,4 +1,5 @@
-import type { Code, Direct, Playlist, User, Video } from "./data"
+import type { DirectContent, VideoPlaylist, UserInfo, VideoContent } from "@prisma/client"
+import type { Code } from "./data"
 import type { DynamicObject } from "./object"
 
 export type Method = "GET" | "POST"
@@ -13,7 +14,7 @@ export type FetchOptions = {
 export type FetchUserResponse = {
   success: boolean,
   token?: string,
-  data: User | null,
+  data: UserInfo | null,
 }
 
 export type FetchCodeResponse = {
@@ -24,18 +25,18 @@ export type FetchCodeResponse = {
 
 export type FetchVideoResponse = {
   success: boolean,
-  data: { videos: Video[], isVideoBuyed: DynamicObject<string, boolean> } | null
+  data: { videos: VideoContent[], isVideoBuyed: DynamicObject<string, boolean> } | null
 }
 
 export type FetchAllContentResponse = {
   success: boolean,
   data: {
-    videos: Video[],
+    videos: VideoContent[],
     isVideoBuyed: DynamicObject<string, boolean>,
-    direct: Direct[],
+    direct: DirectContent[],
     isDirectBuyed: DynamicObject<string, boolean>,
-    rediffusion: Direct[],
-    users: DynamicObject<string, User>,
-    playlists: Playlist[],
+    rediffusion: DirectContent[],
+    users: DynamicObject<string, UserInfo>,
+    playlists: VideoPlaylist[],
   } | null
 }

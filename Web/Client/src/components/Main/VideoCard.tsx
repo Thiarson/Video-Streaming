@@ -3,15 +3,15 @@ import { useDispatch } from "react-redux"
 import { BsFillPlayFill, BsInfoLg } from "react-icons/bs"
 import { BiSolidShoppingBag } from "react-icons/bi"
 import type { FC } from "react"
+import type { VideoContent } from "@prisma/client"
 
 import { baseURL } from "../utils/fetch-server"
 import { directSpec } from "../utils/media-spec"
 import { openModal } from "../utils/features/modal"
 import { useInfo } from "../utils/context/info"
-import type { Video } from "../utils/types/data"
 
 type Props = {
-  content: Video,
+  content: VideoContent,
   isBuyed: boolean,
 }
 

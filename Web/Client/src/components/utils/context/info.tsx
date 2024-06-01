@@ -1,13 +1,13 @@
 import { createContext, useContext } from "react"
 import type { FC, PropsWithChildren, Dispatch, SetStateAction } from "react"
+import type { UserInfo, VideoContent } from "@prisma/client"
 
-import type { User, Video } from "../types/data"
 import type { DynamicObject } from "../types/object"
 
 type InfoValue = {
-  video: Video | null,
-  setVideo: Dispatch<SetStateAction<Video>> | Function
-  users: DynamicObject<string, User>,
+  video: VideoContent | null,
+  setVideo: Dispatch<SetStateAction<VideoContent>> | Function
+  users: DynamicObject<string, UserInfo>,
   isVideoBuyed: DynamicObject<string, boolean>,
 }
 

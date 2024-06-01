@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useReducer, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import type { FC, Reducer } from "react"
+import type { DirectContent, UserInfo, VideoContent } from "@prisma/client"
 
 import Navbar from "./Navbar"
 import UploadVideo from "./UploadVideo"
@@ -18,12 +19,12 @@ import { useQuery, useQueryClient } from "react-query"
 import { fetchServer } from "../utils/fetch-server"
 import { MenuProvider } from "../utils/context/menu"
 import { InfoProvider } from "../utils/context/info"
-import type { Direct, HomeMenu, HomeMenuType, User, Video } from "../utils/types/data"
+import type { HomeMenu, HomeMenuType } from "../utils/types/data"
 import type { RootState } from "../utils/context/store"
 import type { FetchAllContentResponse } from "../utils/types/fetch"
 import type { DynamicObject } from "../utils/types/object"
 
-type VideoCategory = DynamicObject<string, (Video | Direct)[]>
+type VideoCategory = DynamicObject<string, (VideoContent | DirectContent)[]>
 
 const menus: HomeMenu = {
   none: Fragment,
@@ -44,7 +45,7 @@ const Home: FC = () => {
   const modal = useSelector((store: RootState) => store.modal)
   const categories = useRef<VideoCategory>({})
   const isVideoBuyed = useRef<DynamicObject<string, boolean>>({})
-  const users = useRef<DynamicObject<string, User>>({})
+  const users = useRef<DynamicObject<string, UserInfo>>({})
   const [ Menu, dispatch ] = useReducer(reducer, Fragment)
   const [ info, setInfo ] = useState(null)
   
@@ -66,7 +67,7 @@ const Home: FC = () => {
     const list = []
 
     for (const category in categories.current) {
-      const videos = categories.current[category] as Video[]
+      const videos = categories.current[category] as VideoContent[]
 
       if(videos.length === 0)
         return null

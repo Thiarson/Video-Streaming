@@ -7,13 +7,13 @@ try {
 
   const build = path.join(__dirname, 'build')
   const web = path.dirname(__dirname)
-  const clientDir = path.join(web, 'Server/public/client')
+  const server = path.join(web, 'server')
 
   console.log('Removing public directory...')
-  fs.rmSync(clientDir, { recursive: true, force: true })
+  fs.rmSync(server, { recursive: true, force: true })
 
   console.log('Moving build to client directory...')
-  fs.renameSync(build, clientDir)
+  fs.renameSync(build, server)
 
   console.log('Build exécutée avec succès !');
 } catch (e) {

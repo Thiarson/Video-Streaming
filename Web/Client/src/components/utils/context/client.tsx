@@ -1,11 +1,10 @@
 import { createContext, useContext } from "react"
 import type { FC, PropsWithChildren, Dispatch, SetStateAction } from "react"
-
-import type { User } from "../types/data"
+import type { UserInfo } from "@prisma/client"
 
 type ClientValue = {
-  user: User | null,
-  setUser: Dispatch<SetStateAction<User | null>> | Function,
+  user: UserInfo | null,
+  setUser: Dispatch<SetStateAction<UserInfo | null>> | Function,
 }
 
 type Props = PropsWithChildren<{
