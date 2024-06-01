@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { useQuery, useQueryClient } from "react-query"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
@@ -7,7 +8,6 @@ import { AiOutlineInfoCircle } from "react-icons/ai"
 import Button from "../assets/Button"
 import Popup from "../assets/Popup"
 import Invalid from "../assets/Error"
-import { responseSchema } from "../utils/data-validator"
 import { baseURL, fetchServer } from "../utils/fetch-server"
 import { openModal } from "../utils/features/modal"
 import { useInfo } from "../utils/context/info"
@@ -16,6 +16,7 @@ import type { DynamicObject } from "../utils/types/object"
 import type { FetchVideoResponse } from "../utils/types/fetch"
 
 function Carousel() {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const queryClient = useQueryClient()
   const info = useRef("")
@@ -48,11 +49,12 @@ function Carousel() {
   }
 
   const handlePlayVideo = () => {
-
+    navigate(`/watch/${slides.current[video].videoId}`)
   }
 
   const handleBuyVideo = () => {
-
+    setInfo(slides.current[video])
+    dispatch(openModal("buy"))
   }
 
   const handleOpenInfo = () => {

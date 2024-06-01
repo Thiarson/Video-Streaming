@@ -108,4 +108,27 @@ contentService.allContent = async (userId) => {
         playlists,
     };
 };
+contentService.getVideo = async (videoId, userId) => {
+    let isFree = false;
+    let isBuyed = false;
+    let isOwned = false;
+    let video = await db_1.default.videoContent.findUnique({
+        where: { videoId: videoId }
+    });
+    if (!video)
+        throw new Error("Video not found");
+    const buyed = await db_1.default.buyVideo.findFirst({
+        where: {
+            videoId: videoId,
+            userId: userId,
+        }
+    });
+    if (userId === video.userId)
+        isOwned = true;
+    else if (video.videoPrice === '0')
+        isFree = true;
+    else
+        isBuyed = buyed ? true : false;
+    return { isFree, isOwned, isBuyed, video };
+};
 exports.default = contentService;

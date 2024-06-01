@@ -1,14 +1,16 @@
 import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import { AiOutlineClose } from "react-icons/ai"
 import type { FC } from "react"
 
 import Button from "../assets/Button"
-import { closeModal } from "../utils/features/modal"
+import { closeModal, openModal } from "../utils/features/modal"
 import { useInfo } from "../utils/context/info"
 import { baseURL } from "../utils/fetch-server"
 import { directSpec } from "../utils/media-spec"
 
 const Info: FC = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { video: info, users, isVideoBuyed } = useInfo()
 
@@ -25,15 +27,16 @@ const Info: FC = () => {
   }
 
   const handleBuyVideo = () => {
-
+    dispatch(openModal("buy"))
   }
 
   const watch = () => {
-
+    dispatch(closeModal("info"))
+    navigate(`/watch/${info.videoId}`)
   }
 
   return (
-    <div className="z-50 transition duration-300 bg-zinc-700 bg-opacity-80 flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0">
+    <div className="z-50 transition duration-300 bg-black bg-opacity-60 flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0">
       <div className="relative w-auto mx-auto max-w-3xl rounded-md overflow-hidden">
         <div className="transform duration-0 relative flex-auto bg-zinc-900 drop-shadow-md">
           <div>

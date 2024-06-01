@@ -9,6 +9,7 @@ import CreateContent from "./MenuCreateContent"
 import Account from "./MenuAccount"
 import Carousel from "./Carousel"
 import Info from "./Info"
+import BuyVideo from "./BuyVideo"
 import VideoList from "./VideoList"
 import Loading from "../assets/Loading"
 import Error from "../assets/Error"
@@ -131,7 +132,7 @@ const Home: FC = () => {
       {modal.uploadVideo.isOpen && <UploadVideo/>}
       {/* {modal.programDirect.isOpen && <ProgramDirect/>} */}
       {modal.info.isOpen && <Info/>}
-      {/* {modal.buyVideo.isOpen && <BuyVideo/>} */}
+      {modal.buy.isOpen && <BuyVideo/>}
       <Navbar/>
       <Carousel/>
       <div className="pb-24">{video}</div>

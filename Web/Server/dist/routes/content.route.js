@@ -58,4 +58,30 @@ contentRouter.get("/all-content", auth_1.default, async function (req, res) {
         });
     }
 });
+contentRouter.get("/get-video/:videoId", auth_1.default, async function (req, res) {
+    try {
+        const { data } = req.body;
+        const { videoId } = req.params;
+        const { isFree, isOwned, isBuyed, video } = await content_service_1.default.getVideo(videoId, data);
+        res.json({
+            success: true,
+            data: {
+                video: video,
+                isFree: isFree,
+                isBuyed: isBuyed,
+                isOwned: isOwned,
+            }
+        });
+    }
+    catch (e) {
+        if (e instanceof Error)
+            console.error(e.message);
+        else
+            console.error(`Unepected error: ${e}`);
+        res.json({
+            success: false,
+            data: null,
+        });
+    }
+});
 exports.default = contentRouter;

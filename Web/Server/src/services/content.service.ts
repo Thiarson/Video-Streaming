@@ -147,4 +147,37 @@ contentService.allContent = async(userId: string) => {
   }
 }
 
+
+/**
+ * Get the specified video
+ */
+contentService.getVideo = async (videoId: string, userId: string) => {
+  let isFree = false
+  let isBuyed = false
+  let isOwned = false
+
+  let video = await prisma.videoContent.findUnique({
+    where: { videoId: videoId }
+  })
+
+  if (!video)
+    throw new Error("Video not found")
+
+  const buyed = await prisma.buyVideo.findFirst({
+    where: {
+      videoId: videoId,
+      userId: userId,
+    }
+  })
+
+  if (userId === video.userId)
+    isOwned = true
+  else if (video.videoPrice === '0')
+    isFree = true
+  else
+    isBuyed = buyed ? true : false
+
+  return { isFree, isOwned, isBuyed, video }
+}
+
 export default contentService

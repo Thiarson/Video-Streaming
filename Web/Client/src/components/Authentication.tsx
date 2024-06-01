@@ -9,11 +9,11 @@ function Authentication() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='login' element={<Login/>}/>
-        <Route path='signup' element={<Signup/>}/>
-        <Route path='forget-password' element={<ForgetPassword/>}/>
-        <Route path='*' element={<Error code={"404"}/>}/>
-        <Route path='/' element={<Navigate to='login'/>}/>
+        <Route path="login" element={<Login/>}/>
+        <Route path="signup" element={<Signup/>}/>
+        <Route path="forget-password" element={<ForgetPassword/>}/>
+        <Route path="*" element={<Error code={"404"}/>}/>
+        <Route path="/" element={<Navigate to="login"/>}/>
       </Routes>
     </BrowserRouter>
   )

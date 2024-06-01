@@ -4,6 +4,7 @@ import type { Express } from "express"
 
 import authRouter from "./auth.route";
 import contentRouter from "./content.route";
+import streamRouter from "./stream.route";
 
 const src = path.dirname(__dirname)
 const root = path.dirname(src)
@@ -17,7 +18,7 @@ module.exports = (app: Express) => {
   app.use("/api/", contentRouter)
 
   // Endpoint for get the media content with homemade hls-server
-
+  app.use("/streams/", streamRouter)
 
   // Endpoint when user image is requested
   app.get("/data/*", (req, res) => {

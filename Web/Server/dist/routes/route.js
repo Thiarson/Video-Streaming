@@ -7,12 +7,14 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_fs_1 = __importDefault(require("node:fs"));
 const auth_route_1 = __importDefault(require("./auth.route"));
 const content_route_1 = __importDefault(require("./content.route"));
+const stream_route_1 = __importDefault(require("./stream.route"));
 const src = node_path_1.default.dirname(__dirname);
 const root = node_path_1.default.dirname(src);
 const client = node_path_1.default.join(root, 'public/client');
 module.exports = (app) => {
     app.use("/api", auth_route_1.default);
     app.use("/api/", content_route_1.default);
+    app.use("/streams/", stream_route_1.default);
     app.get("/data/*", (req, res) => {
         try {
             const format = [".jpg"];

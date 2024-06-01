@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { BsFillPlayFill, BsInfoLg } from "react-icons/bs"
 import { BiSolidShoppingBag } from "react-icons/bi"
@@ -15,6 +16,7 @@ type Props = {
 }
 
 const VideoCard: FC<Props> = ({ content, isBuyed }) => {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { setVideo } = useInfo()
   const thumbnail = content.videoThumbnail
@@ -26,7 +28,7 @@ const VideoCard: FC<Props> = ({ content, isBuyed }) => {
     duration.value === content.videoDuration)[0]
 
   const watch = () => {
-
+    navigate(`/watch/${content.videoId}`)
   } 
 
   const handleOpenInfo = () => {
@@ -35,7 +37,8 @@ const VideoCard: FC<Props> = ({ content, isBuyed }) => {
   }
 
   const handleBuyVideo = () => {
-    
+    setVideo(content)
+    dispatch(openModal("buy"))
   }
   
   return (

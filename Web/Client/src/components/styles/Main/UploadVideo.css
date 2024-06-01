@@ -1,7 +1,7 @@
 .upload-video-first-container {
   position: fixed;
   color: white;
-  background-color: rgba(63, 63, 70, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
   inset: 0px;
   overflow-y: auto;
   transition-duration: 300ms;
