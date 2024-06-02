@@ -7,10 +7,10 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const joi_1 = __importDefault(require("joi"));
 const db_1 = __importDefault(require("../database/postgre/db"));
 const temp_storage_1 = __importDefault(require("../lib/temp-storage"));
-const mail_config_1 = require("../config/mail-config");
 const jwt_server_1 = require("../lib/jwt-server");
 const data_validator_1 = require("../lib/data-validator");
 const code_generator_1 = require("../lib/code-generator");
+const mail_config_1 = require("../config/mail-config");
 const authService = {};
 authService.addUser = async (userData) => {
     const { error } = data_validator_1.signupSchema.validate({
@@ -36,7 +36,13 @@ authService.addUser = async (userData) => {
     const code = (0, code_generator_1.generateVerifCode)();
     const subject = "Code de vérification";
     const textMessage = `Voici le code de vérification de votre compte: ${code}`;
-    const sent = (0, mail_config_1.sendMail)(userData.userEmail, subject, textMessage);
+    const options = {
+        ...mail_config_1.mailOptions,
+        to: userData.userEmail,
+        subject: subject,
+        text: textMessage,
+    };
+    await mail_config_1.transporter.sendMail(options);
     console.log(code);
     temp_storage_1.default.set(userData.userEmail, { code: code, userId: userData.userId }, 90);
     temp_storage_1.default.set(userData.userId, userData, 90);
@@ -104,7 +110,13 @@ authService.forgetPassword = async (email) => {
     const code = (0, code_generator_1.generateVerifCode)();
     const subject = "Code de vérification";
     const textMessage = `Voici le code de vérification de votre compte: ${code}`;
-    const sent = (0, mail_config_1.sendMail)(email, subject, textMessage);
+    const options = {
+        ...mail_config_1.mailOptions,
+        to: email,
+        subject: subject,
+        text: textMessage,
+    };
+    await mail_config_1.transporter.sendMail(options);
     console.log(code);
     temp_storage_1.default.set(email, { code: code }, 90);
     return code;

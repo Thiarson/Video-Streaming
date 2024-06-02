@@ -4,12 +4,13 @@ import type { UserInfo } from "@prisma/client"
 
 import prisma from "../database/postgre/db"
 import tempStorage from "../lib/temp-storage"
-import { sendMail } from "../config/mail-config"
 import { generateJwtToken } from "../lib/jwt-server"
 import { loginSchema, signupSchema, pattern } from "../lib/data-validator"
 import { generateVerifCode } from "../lib/code-generator"
+import { mailOptions, transporter } from "../config/mail-config"
 import type { DynamicObject } from "../utils/types/object"
 import type { Code } from "../utils/types/data"
+import type { MailOptions } from "nodemailer/lib/json-transport"
 
 const authService: DynamicObject<string, Function> = {}
 
@@ -47,11 +48,15 @@ authService.addUser = async (userData: UserInfo): Promise<number> => {
   const code = generateVerifCode()
   const subject = "Code de vérification"
   const textMessage = `Voici le code de vérification de votre compte: ${code}`
-  const sent = sendMail(userData.userEmail, subject, textMessage)
-  console.log(code);
+  const options: MailOptions = {
+    ...mailOptions,
+    to: userData.userEmail,
+    subject: subject,
+    text: textMessage,
+  }
 
-  // if (!sent)
-  //   throw new Error("Cannot send the e-mail")
+  await transporter.sendMail(options)
+  console.log(code);
 
   // Cache email and code in temporary database (Mongo)
   tempStorage.set(userData.userEmail, { code: code, userId: userData.userId }, 90)
@@ -164,11 +169,15 @@ authService.forgetPassword = async (email: string): Promise<number> => {
     const code = generateVerifCode()
     const subject = "Code de vérification"
     const textMessage = `Voici le code de vérification de votre compte: ${code}`
-    const sent = sendMail(email, subject, textMessage)
-    console.log(code);
+    const options: MailOptions = {
+      ...mailOptions,
+      to: email,
+      subject: subject,
+      text: textMessage,
+    }
   
-    // if (!sent)
-    //   throw new Error("Cannot send the e-mail")
+    await transporter.sendMail(options)  
+    console.log(code);
   
     // Cache email and code in temporary database (Mongo)
     tempStorage.set(email, { code: code }, 90)
