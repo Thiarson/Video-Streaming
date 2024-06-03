@@ -17,6 +17,11 @@ const CreateContent: FC = () => {
     toggleMenu("none")
   }
 
+  const handleProgramDirect = () => {
+    dispatch(openModal("programDirect"))
+    toggleMenu("none")
+  }
+
   return (
     <div className="menu-create-first-container">
       <div className="menu-create-box-container">
@@ -24,7 +29,7 @@ const CreateContent: FC = () => {
           <BiUpload size={25}/>
           Ajouter une vidéo
         </div>
-        <div className="menu-create-box hover:underline" onClick={undefined}>
+        <div className="menu-create-box hover:underline" onClick={handleProgramDirect}>
           <CiStreamOn size={25} />
           Programmer un direct
         </div>

@@ -69,6 +69,61 @@ contentRouter.get("/all-content", auth, async function (req, res) {
 })
 
 /** 
+ * Route to upload video
+ */
+contentRouter.post("/upload-video", auth, async function (req, res) {
+  try {
+    const maxFileSize = 500 * 1024 * 1024 // 500 mo
+    const form = formidable({ maxFileSize: maxFileSize })
+    const formData = await form.parse(req)
+    
+    await contentService.uploadVideo(formData)
+
+    res.json({
+      success: true,
+      data: null,
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
+/** 
+ * Route to program direct
+ */
+contentRouter.post("/program-direct", auth, async function (req, res) {
+  try {
+    const form = formidable()
+    const formData = await form.parse(req)
+    
+    await contentService.programDirect(formData)
+
+    res.json({
+      success: true,
+      data: null,
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
+/** 
  * Route to get the specified video
  */
 contentRouter.get("/get-video/:videoId", auth, async function (req, res) {

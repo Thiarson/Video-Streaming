@@ -6,6 +6,7 @@ type SliceState = typeof initialState
 const initialState = {
   codeVerif: { isOpen: false },
   uploadVideo: { isOpen: false },
+  programDirect: { isOpen: false },
   info: { isOpen: false },
   buy: { isOpen: false},
 }

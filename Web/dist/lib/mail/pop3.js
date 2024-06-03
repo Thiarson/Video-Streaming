@@ -20,7 +20,6 @@ const prisma = new client_1.PrismaClient({
     },
 });
 const PORT = 110;
-const HOST = "127.0.0.1";
 const initialeState = {
     isAuthenticated: false,
     user: null,
@@ -202,6 +201,6 @@ const server = node_net_1.default.createServer((socket) => {
         console.log("Connection closed");
     });
 });
-server.listen(PORT, HOST, () => {
+server.listen(PORT, () => {
     console.log(`POP3 server listening on port ${PORT}`);
 });

@@ -31,7 +31,6 @@ const prisma = new PrismaClient({
 })
 
 const PORT = 110
-const HOST = "127.0.0.1"
 
 // Etat initial de chaque session de connexion
 const initialeState: State = {
@@ -266,7 +265,7 @@ function handleQuit(state: State, params: string[], callback: Function) {
   callback("+OK Goodbye", true)
 }
 
-const server = net.createServer((socket) => {
+const server = net.createServer((socket) => {  
   const state: State = { ...initialeState }
 
   // Quand le client se connecte au serveur, il attend cette reponse
@@ -300,6 +299,6 @@ const server = net.createServer((socket) => {
   })
 })
 
-server.listen(PORT, HOST, () => {
+server.listen(PORT, () => {
   console.log(`POP3 server listening on port ${PORT}`);
 })

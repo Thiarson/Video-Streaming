@@ -160,3 +160,9 @@
   background-color: rgb(220, 38, 38);
   border-radius: 6px;
 }
+
+.upload-video-disabled-button {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+

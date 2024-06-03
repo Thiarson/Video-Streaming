@@ -23,7 +23,7 @@ function Carousel() {
   const slides = useRef<VideoContent[]>([])
   const videoBuyed = useRef<DynamicObject<string, boolean>>({})
   const [ video, setVideo ] = useState(0)
-  const { setVideo: setInfo } = useInfo()
+  const { setContent: setInfo, setType } = useInfo()
 
   const queryKey = ["carousel"]
   const query = useQuery(queryKey, () => {
@@ -53,11 +53,13 @@ function Carousel() {
   }
 
   const handleBuyVideo = () => {
+    setType("video")
     setInfo(slides.current[video])
     dispatch(openModal("buy"))
   }
 
   const handleOpenInfo = () => {
+    setType("video")
     setInfo(slides.current[video])
     dispatch(openModal("info"))
   }

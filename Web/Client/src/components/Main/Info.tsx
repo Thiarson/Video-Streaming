@@ -1,7 +1,9 @@
+import { useRef } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AiOutlineClose } from "react-icons/ai"
 import type { FC } from "react"
+import type { DirectContent, VideoContent } from "@prisma/client"
 
 import Button from "../assets/Button"
 import { closeModal, openModal } from "../utils/features/modal"
@@ -12,27 +14,66 @@ import { directSpec } from "../utils/media-spec"
 const Info: FC = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { video: info, users, isVideoBuyed } = useInfo()
+  const { content, type, users, isVideoBuyed, isDirectBuyed } = useInfo()
+  const info = useRef<VideoContent | DirectContent>()
+  const id = useRef("")
+  const isBuyed = useRef(false)
+  const thumbnail = useRef("")
+  const title = useRef("")
+  const category = useRef("")
+  const duration = useRef("")
+  const playlist = useRef<string | null>(null)
+  const price = useRef("")
+  const description = useRef("")
 
-  if (info === null)
+  if (content === null)
     throw new Error("Info is null")
 
-  const user = users[info.userId]
-  const isBuyed = isVideoBuyed[info.videoId]
-  const duration = directSpec.durations.filter((duration) => 
-    duration.value === info.videoDuration)[0]
+  if (type === "video") {
+    info.current = content as VideoContent
+    id.current = info.current.videoId
+    thumbnail.current = info.current.videoThumbnail
+    title.current = info.current.videoTitle
+    category.current = info.current.videoCategory
+    isBuyed.current = isVideoBuyed[info.current.videoId]
+    playlist.current = info.current.videoPlaylist
+    price.current = info.current.videoPrice
+    description.current = info.current.videoDescription
+
+    const temp = info.current.videoDuration
+    duration.current = directSpec.durations.filter((duration) =>
+      duration.value === temp)[0].time
+  } else if (type === "direct") {
+    info.current = content as DirectContent
+    id.current = info.current.directId
+    thumbnail.current = info.current.directThumbnail
+    title.current = info.current.directTitle
+    category.current = "Direct"
+    isBuyed.current = isDirectBuyed[info.current.directId]
+    price.current = info.current.directPrice
+    description.current = info.current.directDescription
+
+    const temp = info.current.directDuration
+    duration.current = directSpec.durations.filter((duration) =>
+      duration.value === temp)[0].time
+  } else {
+    throw new Error("Type is null")
+  }
+
+  const user = users[content.userId]
 
   const handleClose = () => {
     dispatch(closeModal("info"))
   }
 
   const handleBuyVideo = () => {
+
     dispatch(openModal("buy"))
   }
 
   const watch = () => {
     dispatch(closeModal("info"))
-    navigate(`/watch/${info.videoId}`)
+    navigate(`/watch/${id.current}`)
   }
 
   return (
@@ -51,26 +92,26 @@ const Info: FC = () => {
             </div>
           </div>
           <div className="relative h-96">
-            <img className="w-full brightness-[60%] object-cover h-full" src={baseURL+info.videoThumbnail} alt="Thumbnail" />
+            <img className="w-full brightness-[60%] object-cover h-full" src={baseURL+thumbnail.current} alt="Thumbnail" />
             <div className="absolute w-full flex flex-col gap-4 bottom-[20%] left-10">
               <p className="text-white text-5xl h-full font-bold w-[60%]">
-                {info.videoTitle}
+                {title.current}
               </p>
               <div className="flex gap-2 text-white">
-                <p>{info.videoCategory}</p>
+                <p>{category.current}</p>
                 <span>-</span>
-                <p>{duration.time}</p>
+                <p>{duration.current}</p>
                 <span>-</span>
-                {info.videoPlaylist}
-                <p className="text-[#ffd62c] font-semibold bg-zinc-800 bg-opacity-60 px-1 rounded-md">{info.videoPrice === '0' ? 'Gratuit' : `${info.videoPrice} Ar`}</p>
+                {playlist.current}
+                <p className="text-[#ffd62c] font-semibold bg-zinc-800 bg-opacity-60 px-1 rounded-md">{price.current === '0' ? 'Gratuit' : `${price.current} Ar`}</p>
               </div>
               <div className="flex gap-4 items-center">
-                {isBuyed ? <Button type="play" onClick={watch}/> : <Button type="buy" onClick={handleBuyVideo}/>}
+                {isBuyed.current ? <Button type="play" onClick={watch}/> : <Button type="buy" onClick={handleBuyVideo}/>}
               </div>
             </div>
           </div>
           <div className="px-10 py-6">
-            <p className="text-white text-lg">{info.videoDescription}</p>
+            <p className="text-white text-lg">{description.current}</p>
           </div>
         </div>
       </div>

@@ -40,3 +40,8 @@ export type FetchAllContentResponse = {
     playlists: VideoPlaylist[],
   } | null
 }
+
+export type FetchVoidResponse = {
+  success: boolean,
+  data: null,
+}

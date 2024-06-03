@@ -1,6 +1,11 @@
 import storage from "./local-storage"
 import type { FetchOptions, Method } from "./types/fetch"
 
+type FetchMethod = {
+  get: Method,
+  post: Method,
+}
+
 const serverInfo = {
   protocol: window.location.protocol,
   hostname: window.location.hostname,
@@ -10,7 +15,7 @@ const serverInfo = {
 let baseURL = `${serverInfo.protocol}//${serverInfo.hostname}:${serverInfo.port}`
 
 if (baseURL === "http://localhost:3000")
-  baseURL = "https://localhost:8080"
+  baseURL = "https://localhost:443"
 
 const defaultOptions = {
   headers: {
@@ -20,11 +25,6 @@ const defaultOptions = {
   },
 }
 
-type FetchMethod = {
-  get: Method,
-  post: Method,
-}
-
 const methods: FetchMethod = {
   get: "GET",
   post: "POST",
@@ -32,10 +32,31 @@ const methods: FetchMethod = {
 
 const jwt = { "Authorization": `Bearer ${storage.token}` }
 
-const fetchPromise = (url: string, options: FetchOptions) => {
+const fetchPromise = (url: string, options: FetchOptions, form: FormData) => {
+  return new Promise((resolve, reject) => {
+    fetch(`${baseURL}${url}`, {
+      method: options.method,
+      headers: {
+        ...jwt,
+        ...options.headers,
+      },
+      body: form,
+    })
+      .then((response) => {
+        if (!response.ok)
+          throw new Error("Fetch response was not ok")
+
+        resolve(response.json())
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+const fetchWithTimeout = (url: string, options: FetchOptions, timeout = 6000) => {
   return new Promise((resolve, reject) => {
     const controller = new AbortController()
-    const timeout = 6000
     const id = setTimeout(() => {
       controller.abort()
       reject(new Error("Request timed out"))
@@ -70,15 +91,15 @@ const fetchServer = {
     const method = methods.get
     const headers = { ...jwt, ...options.headers }
 
-    return fetchPromise(url, { method, headers })
+    return fetchWithTimeout(url, { method, headers })
   },
   post: async (url: string, options: FetchOptions = {}) => {
     const method = methods.post
     const headers = { ...jwt, ...options.headers }
     const body = { ...options.body }
 
-    return fetchPromise(url, { method, headers, body })
+    return fetchWithTimeout(url, { method, headers, body })
   },
 }
 
-export { fetchServer, baseURL }
+export { fetchServer, fetchPromise, baseURL }

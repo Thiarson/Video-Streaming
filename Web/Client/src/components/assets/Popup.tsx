@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom"
 import { motion } from "framer-motion"
-import type { FC } from "react"
+import type { FC, PropsWithChildren } from "react"
 import type { MotionStyle } from "framer-motion"
 
 type Style = {
@@ -9,9 +9,9 @@ type Style = {
 
 type PopupKey = keyof typeof popup
 
-type Props = {
+type Props = PropsWithChildren<{
   type: PopupKey,
-}
+}>
 
 const popup = {
   offline: {
@@ -49,7 +49,7 @@ const popupVariants = {
   exit: { opacity: 0, y: -50, transition: { duration: 0.5 } },
 }
 
-const Popup: FC<Props> = ({ type }) => {
+const Popup: FC<Props> = ({ type, children }) => {
   const popupStyles = {
     ...styles.popup,
     ...popup[type].styles,
@@ -64,7 +64,7 @@ const Popup: FC<Props> = ({ type }) => {
         animate="visible"
         exit="exit"
       >
-        {popup[type].message}
+        {children ?? popup[type].message}
       </motion.div>
     </div>,
   document.body)

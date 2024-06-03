@@ -12,7 +12,7 @@ import { useError } from "../utils/hooks/useError"
 import { fetchServer } from "../utils/fetch-server"
 import { responseSchema } from "../utils/data-validator"
 import type { Code } from "../utils/types/data"
-import type { FetchUserResponse } from "../utils/types/fetch"
+import type { FetchVoidResponse } from "../utils/types/fetch"
 
 import "../styles/Auth/ResetPassword.css"
 
@@ -68,7 +68,7 @@ const ResetPassword: FC<Props> = ({ data }) => {
 
   if (query.isSuccess) {
     try {
-      const response = query.data as FetchUserResponse
+      const response = query.data as FetchVoidResponse
       const { success } = response
 
       responseSchema.parse(response)

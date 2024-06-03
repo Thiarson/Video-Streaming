@@ -1,23 +1,31 @@
 import { createContext, useContext } from "react"
 import type { FC, PropsWithChildren, Dispatch, SetStateAction } from "react"
-import type { UserInfo, VideoContent } from "@prisma/client"
+import type { DirectContent, UserInfo, VideoContent, VideoPlaylist } from "@prisma/client"
 
 import type { DynamicObject } from "../types/object"
 
-type InfoValue = {
-  video: VideoContent | null,
-  setVideo: Dispatch<SetStateAction<VideoContent>> | Function
+export type InfoValue = {
+  type: "video" | "direct" | null,
+  setType: Dispatch<SetStateAction<"video" | "direct">> | Function
+  content: VideoContent | DirectContent | null,
+  setContent: Dispatch<SetStateAction<VideoContent | DirectContent>> | Function
   users: DynamicObject<string, UserInfo>,
   isVideoBuyed: DynamicObject<string, boolean>,
+  isDirectBuyed: DynamicObject<string, boolean>,
+  myPlaylists: VideoPlaylist[],
 }
 
 type Props = PropsWithChildren<{value: InfoValue}>
 
 const InfoContext = createContext<InfoValue>({
-  video: null,
-  setVideo: () => { console.log("setInfo: no context") },
+  type: null,
+  setType: () => { console.log("setType: no context") },
+  content: null,
+  setContent: () => { console.log("setInfo: no context") },
   users: {},
   isVideoBuyed: {},
+  isDirectBuyed: {},
+  myPlaylists: [],
 })
 
 function useInfo() {

@@ -1,7 +1,42 @@
+import fs from "node:fs"
+import { mkdirp } from "mkdirp"
+import { v4 as uuidv4 } from "uuid"
 import type { AssistDirect, BuyVideo, DirectContent, UserInfo } from "@prisma/client"
+import type { File } from "formidable"
 
 import prisma from "../database/postgre/db"
+import { generateThumbnail } from "../lib/generate-thumbnail"
+import { encodeHls } from "../lib/encode"
+import { generateKey, replaceSpecialChar } from "../lib/utils"
 import type { DynamicObject } from "../utils/types/object"
+
+type UploadFields = {
+  playlist: string[],
+  title: string[],
+  description: string[],
+  category: string[],
+  duration: string[],
+  price: string[],
+  userId: string[]
+}
+
+type ProgamFields = {
+  title: string[],
+  description: string[],
+  date: string[],
+  time: string[],
+  duration: string[],
+  price: string[],
+  userId: string[]
+}
+
+type UploadFile = {
+  video: File[],
+}
+
+type ProgramFile = {
+  image: File[],
+}
 
 const contentService: DynamicObject<string, Function> = {}
 
@@ -15,6 +50,7 @@ contentService.carouselList = async (userId: string) => {
   // Must get limited videos (10)
   const allVideos = await prisma.videoContent.findMany({
     where: {
+      isValid: true,
       userId: {
         not: { equals: userId }
       }
@@ -147,6 +183,105 @@ contentService.allContent = async(userId: string) => {
   }
 }
 
+/**
+ * Upload video to the server
+ */
+contentService.uploadVideo = async (formData: [UploadFields, UploadFile]) => {  
+  const { playlist, title, description, category, duration, price, userId } = formData[0]
+  const { video } = formData[1]
+  const filePath = video[0].filepath
+  // const resolutions = ['720p', '480p']
+  const resolutions = ['720p']
+
+  let name = title[0]
+  name = replaceSpecialChar(name)
+
+  const now = new Date()
+  const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+  const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+  const publication = `${date} ${time}`
+  const videoId = `${uuidv4()}_${name}_${now.getTime()}`
+  const videoUrl = `/streams/${userId}/videos/${videoId}/${name}.m3u8`
+  const inPath = `./data/${userId}/${videoId}`
+  const impTemp = `./data/${userId}/videos/${videoId}/temp.jpg`
+  const thumbnail = `/data/${userId}/videos/${videoId}/${name}.jpg`
+
+  // Il faut reverifier les données ici
+
+  const videoPlaylist = await prisma.videoPlaylist.findUnique({
+    where: { playlistId: playlist[0] }
+  })
+
+  await prisma.videoContent.create({
+    data: {
+      videoId : videoId,
+      userId : userId[0],
+      videoTitle : title[0],
+      videoDescription : description[0],
+      videoCategory : category[0],
+      videoPrice : price[0],
+      videoThumbnail : thumbnail,
+      videoUrl : videoUrl,
+      videoDuration : duration[0],
+      videoPlaylist : videoPlaylist?.playlistId,
+    }
+  })
+
+  await prisma.videoCheck.create({
+    data: { videoId: videoId }
+  })
+
+  mkdirp.sync(`./data/${userId}`)
+  fs.renameSync(filePath, inPath)
+
+  mkdirp.sync(`./data/${userId}/videos/${videoId}`)
+  fs.accessSync(`./data/${userId}/videos/${videoId}`, fs.constants.W_OK);
+  fs.appendFileSync(`./data/${userId}/videos/${videoId}/${name}.m3u8`, '#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-INDEPENDENT-SEGMENTS\n')
+
+  generateThumbnail(inPath, impTemp, `./${thumbnail}`)
+  encodeHls(inPath, videoId, resolutions, userId[0], name)
+}
+
+
+/**
+ * Program the direct to the db
+ */
+contentService.programDirect = async (formData: [ProgamFields, ProgramFile]) => {  
+  const { title, description, date, time, duration, price, userId } = formData[0]
+  const { image } = formData[1]
+  const filePath = image[0].filepath
+  // const name = title[0].replace(/\s/g, '_')
+  const name = replaceSpecialChar(title[0])
+
+  const now = new Date()
+  const directId = `${name}_${now.getTime()}`
+  const directUrl = `/streams/${userId}/direct/${directId}/index.m3u8`
+  const thumbnail = `/data/${userId}/direct/${directId}/${name}.jpg`
+
+  // Il faut reverifier les données ici
+
+  mkdirp.sync(`./data/${userId}/direct/${directId}`)
+  fs.renameSync(filePath, `./${thumbnail}`)
+
+  await prisma.directContent.create({
+    data: {
+      directId : directId,
+      userId : userId[0],
+      directTitle : title[0],
+      directDescription : description[0],
+      directDate: new Date(`${date[0]}T${time[0]}`),
+      directPrice : price[0],
+      directThumbnail : thumbnail,
+      directUrl : directUrl,
+      directDuration : duration[0],
+      directKey: generateKey(),
+    }
+  })
+
+  await prisma.directCheck.create({
+    data: { directId: directId }
+  })
+}
 
 /**
  * Get the specified video
