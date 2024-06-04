@@ -1,8 +1,17 @@
+import dotenv from "dotenv"
 import mongoose from "mongoose"
 
 import { EmailUser } from "./db"
 
-mongoose.connect("mongodb://127.0.0.1:27017/videostreaming")
+dotenv.config()
+
+const DATABASE_URL = process.env.MONGO_DATABASE_URL ?? "mongodb://127.0.0.1:27017/videostreaming"
+
+if (!DATABASE_URL) {
+  throw new Error("Database URL required")
+}
+
+mongoose.connect(DATABASE_URL)
   .then(() => {
     console.log("Connected to MongoDB");
   })

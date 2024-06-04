@@ -106,28 +106,6 @@ CREATE TABLE "AssistDirect" (
     CONSTRAINT "AssistDirect_pkey" PRIMARY KEY ("assistDirectId")
 );
 
--- CreateTable
-CREATE TABLE "Email" (
-    "emailId" SERIAL NOT NULL,
-    "emailSubject" TEXT NOT NULL,
-    "emailBody" TEXT NOT NULL,
-    "emailSenderId" INTEGER NOT NULL,
-    "emailReceiverId" INTEGER NOT NULL,
-    "emailCreatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "emailDeleted" BOOLEAN NOT NULL DEFAULT false,
-
-    CONSTRAINT "Email_pkey" PRIMARY KEY ("emailId")
-);
-
--- CreateTable
-CREATE TABLE "EmailUser" (
-    "userId" SERIAL NOT NULL,
-    "userEmail" TEXT NOT NULL,
-    "userPassword" TEXT NOT NULL,
-
-    CONSTRAINT "EmailUser_pkey" PRIMARY KEY ("userId")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "UserInfo_userId_key" ON "UserInfo"("userId");
 
@@ -173,9 +151,6 @@ CREATE UNIQUE INDEX "BuyVideo_buyVideoId_key" ON "BuyVideo"("buyVideoId");
 -- CreateIndex
 CREATE UNIQUE INDEX "AssistDirect_assistDirectId_key" ON "AssistDirect"("assistDirectId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "EmailUser_userEmail_key" ON "EmailUser"("userEmail");
-
 -- AddForeignKey
 ALTER TABLE "VideoContent" ADD CONSTRAINT "VideoContent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserInfo"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -205,9 +180,3 @@ ALTER TABLE "AssistDirect" ADD CONSTRAINT "AssistDirect_directId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "AssistDirect" ADD CONSTRAINT "AssistDirect_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserInfo"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Email" ADD CONSTRAINT "Email_emailSenderId_fkey" FOREIGN KEY ("emailSenderId") REFERENCES "EmailUser"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Email" ADD CONSTRAINT "Email_emailReceiverId_fkey" FOREIGN KEY ("emailReceiverId") REFERENCES "EmailUser"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;

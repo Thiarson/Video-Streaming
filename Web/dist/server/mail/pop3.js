@@ -5,19 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_net_1 = __importDefault(require("node:net"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const client_1 = require("@prisma/client");
+const mongoose_1 = __importDefault(require("mongoose"));
+const db_1 = require("../database/mongo/db");
 dotenv_1.default.config();
-const DATABASE_URL = process.env.POSTGRE_DATABASE_URL;
+const DATABASE_URL = process.env.MONGO_DATABASE_URL ?? "mongodb://127.0.0.1:27017/videostreaming";
 if (!DATABASE_URL) {
     throw new Error("Database URL required");
 }
-const databaseUrl = new URL(DATABASE_URL);
-const prisma = new client_1.PrismaClient({
-    datasources: {
-        db: {
-            url: databaseUrl.toString(),
-        },
-    },
+mongoose_1.default.connect(DATABASE_URL)
+    .catch((error) => {
+    console.error(`Error connecting to MongoDB: ${error}`);
 });
 const PORT = 110;
 const initialeState = {
@@ -60,9 +57,7 @@ function extractBody(emailBody) {
 async function handleUser(state, params, callback) {
     if (params.length !== 1)
         return callback("-ERR invalid USER command");
-    const user = await prisma.emailUser.findUnique({
-        where: { userEmail: params[0] }
-    });
+    const user = await db_1.EmailUser.findOne({ userEmail: params[0] });
     if (!user)
         return callback("-ERR User not found");
     state.user = user;
@@ -71,10 +66,7 @@ async function handleUser(state, params, callback) {
 async function handlePass(state, params, callback) {
     if (params.length !== 1 || !state.user)
         return callback("-ERR [AUTH] Invalid PASS command");
-    const user = await prisma.emailUser.findUnique({
-        where: { userEmail: state.user.userEmail },
-        select: { userPassword: true }
-    });
+    const user = await db_1.EmailUser.findOne({ userEmail: state.user.userEmail });
     if (!user || user.userPassword !== params[0])
         return callback("-ERR [AUTH] Authentication failed");
     state.isAuthenticated = true;
@@ -83,11 +75,9 @@ async function handlePass(state, params, callback) {
 async function handleStat(state, params, callback) {
     if (!state.isAuthenticated)
         return callback("-ERR Not authenticated");
-    const emails = await prisma.email.findMany({
-        where: {
-            emailReceiverId: state.user?.userId,
-            emailDeleted: false,
-        }
+    const emails = await db_1.Email.find({
+        emailReceiver: state.user?.id,
+        emailDeleted: false,
     });
     const count = emails.length;
     const octets = emails.reduce((acc, email) => acc + email.emailBody.length, 0);
@@ -96,15 +86,13 @@ async function handleStat(state, params, callback) {
 async function handleUidl(state, paramas, callback) {
     if (!state.isAuthenticated)
         return callback("-ERR Not authenticated");
-    const emails = await prisma.email.findMany({
-        where: {
-            emailReceiverId: state.user?.userId,
-            emailDeleted: false,
-        }
+    const emails = await db_1.Email.find({
+        emailReceiver: state.user?.id,
+        emailDeleted: false,
     });
     const response = emails.map((email, index) => {
-        state.uid[index + 1] = email.emailId;
-        return `${index + 1} ${email.emailId}`;
+        state.uid[index + 1] = email.id;
+        return `${index + 1} ${email.id}`;
     }).join("\r\n");
     callback(`+OK ${emails.length} messages\r\n${response}\r\n.`);
 }
@@ -113,12 +101,10 @@ async function handleTop(state, params, callback) {
         return callback("-ERR Invalid TOP command");
     const emailId = parseInt(params[0], 10);
     const numberOfLines = parseInt(params[1], 10);
-    const email = await prisma.email.findUnique({
-        where: {
-            emailId: emailId,
-            emailReceiverId: state.user?.userId,
-            emailDeleted: false,
-        }
+    const email = await db_1.Email.findOne({
+        _id: emailId,
+        emailReceiver: state.user?.id,
+        emailDeleted: false,
     });
     if (!email)
         return callback("-ERR No such message");
@@ -129,11 +115,9 @@ async function handleTop(state, params, callback) {
 async function handleList(state, params, callback) {
     if (!state.isAuthenticated)
         return callback("-ERR Not authenticated");
-    const emails = await prisma.email.findMany({
-        where: {
-            emailReceiverId: state.user?.userId,
-            emailDeleted: false,
-        }
+    const emails = await db_1.Email.find({
+        emailReceiver: state.user?.id,
+        emailDeleted: false,
     });
     const response = emails.map((email, index) => `${index + 1} ${email.emailBody.length}`).join("\r\n");
     callback(`+OK ${emails.length} messages\r\n${response}\r\n.`);
@@ -142,17 +126,11 @@ async function handleRetr(state, params, callback) {
     if (!state.isAuthenticated || params.length !== 1)
         return callback("-ERR Invalid RETR Command");
     const emailId = state.uid[params[0]];
-    const email = await prisma.email.findUnique({
-        where: {
-            emailId: emailId,
-        },
-        include: {
-            emailSender: true
-        }
-    });
-    if (!email)
+    const email = await db_1.Email.findOne({ _id: emailId });
+    const emailSender = await db_1.EmailUser.findOne({ _id: email?.emailSender });
+    if (!email || !emailSender)
         return callback("-ERR No such message");
-    const response = `From: ${email.emailSender.userEmail}\r\n` +
+    const response = `From: ${emailSender.userEmail}\r\n` +
         `Subject: ${email.emailSubject}\r\n\r\n` +
         `${email.emailBody}`;
     callback(`+OK ${response.length} octets\r\n${response}\r\n.`);
@@ -161,14 +139,7 @@ async function handleDele(state, params, callback) {
     if (!state.isAuthenticated || params.length !== 1)
         return callback("-ERR Invalid DELE command");
     const emailId = parseInt(params[0], 10);
-    const email = await prisma.email.update({
-        where: {
-            emailId: emailId,
-        },
-        data: {
-            emailDeleted: true,
-        }
-    });
+    const email = await db_1.Email.updateOne({ _id: emailId }, { emailDeleted: true });
     if (!email)
         return callback("-ERR No such message");
     callback("-OK Message deleted");

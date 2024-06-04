@@ -107,23 +107,3 @@ model AssistDirect {
   userId         String        @db.VarChar()
   purchaseDate   DateTime      @default(now())
 }
-
-model Email {
-  emailId         Int       @id @default(autoincrement())
-  emailSubject    String
-  emailBody       String
-  emailSenderId   Int
-  emailSender     EmailUser @relation(name: "Sender", fields: [emailSenderId], references: [userId])
-  emailReceiverId Int
-  emailReceiver   EmailUser @relation(name: "Receiver", fields: [emailReceiverId], references: [userId])
-  emailCreatedAt  DateTime  @default(now())
-  emailDeleted    Boolean   @default(false)
-}
-
-model EmailUser {
-  userId        Int     @id @default(autoincrement())
-  userEmail     String  @unique
-  userPassword  String
-  emailSent     Email[] @relation("Sender")
-  emailReceived Email[] @relation("Receiver")
-}

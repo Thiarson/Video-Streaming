@@ -168,12 +168,6 @@ const rediffusionData = [
         rediffusionUrl: `/streams/${userId.lova}/videos/${directId.leader}/index.m3u8`,
     },
 ];
-const emailData = [
-    {
-        userEmail: "Video.Streaming@admin.mg",
-        userPassword: "admin",
-    },
-];
 async function main() {
     console.log(`Start seeding ...`);
     for (const data of userData) {
@@ -199,12 +193,6 @@ async function main() {
             data: data,
         });
         console.log(`Created rediffusion with id: ${rediffusion.rediffusionId}`);
-    }
-    for (const data of emailData) {
-        const email = await prisma.emailUser.create({
-            data: data,
-        });
-        console.log(`Created email user with email: ${email.userEmail}`);
     }
     console.log(`Seeding finished.`);
 }

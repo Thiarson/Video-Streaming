@@ -4,21 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const smtp_server_1 = require("smtp-server");
 const mailparser_1 = require("mailparser");
-const client_1 = require("@prisma/client");
+const db_1 = require("../database/mongo/db");
 dotenv_1.default.config();
-const DATABASE_URL = process.env.POSTGRE_DATABASE_URL;
+const DATABASE_URL = process.env.MONGO_DATABASE_URL ?? "mongodb://127.0.0.1:27017/videostreaming";
 if (!DATABASE_URL) {
     throw new Error("Database URL required");
 }
-const databaseUrl = new URL(DATABASE_URL);
-const prisma = new client_1.PrismaClient({
-    datasources: {
-        db: {
-            url: databaseUrl.toString(),
-        },
-    },
+mongoose_1.default.connect(DATABASE_URL)
+    .catch((error) => {
+    console.error(`Error connecting to MongoDB: ${error}`);
 });
 const PORT = 25;
 const server = new smtp_server_1.SMTPServer({
@@ -33,11 +30,7 @@ const server = new smtp_server_1.SMTPServer({
     async onAuth(auth, session, callback) {
         const { username, password } = auth;
         console.log(`Authentication: ${username}`);
-        const user = await prisma.emailUser.findUnique({
-            where: {
-                userEmail: username,
-            }
-        });
+        const user = await db_1.EmailUser.findOne({ userEmail: username });
         if (!user)
             return callback(new Error("User not found"));
         callback(null, { user: username });
@@ -49,28 +42,18 @@ const server = new smtp_server_1.SMTPServer({
                 return callback(err);
             if (!parsed.from || !parsed.from.value[0].address)
                 throw new Error("Sender is undefined");
-            let sender = await prisma.emailUser.upsert({
-                where: { userEmail: parsed.from.value[0].address },
-                update: {},
-                create: { userEmail: parsed.from.value[0].address, userPassword: "default" }
-            });
+            let sender = await db_1.EmailUser.findOneAndUpdate({ userEmail: parsed.from.value[0].address }, { $setOnInsert: { userEmail: parsed.from.value[0].address, userPassword: "default" } }, { upsert: true, new: true });
             const destination = parsed.to;
             if (!destination.value[0].address)
                 throw new Error("Receiver is undefined");
-            let receiver = await prisma.emailUser.upsert({
-                where: { userEmail: destination.value[0].address },
-                update: {},
-                create: { userEmail: destination.value[0].address, userPassword: "default" }
-            });
+            let receiver = await db_1.EmailUser.findOneAndUpdate({ userEmail: destination.value[0].address }, { $setOnInsert: { userEmail: destination.value[0].address, userPassword: "default" } }, { upsert: true, new: true });
             if (!parsed.subject || !parsed.text)
                 throw new Error("Email subject or body is undefined");
-            await prisma.email.create({
-                data: {
-                    emailSubject: parsed.subject,
-                    emailBody: parsed.text,
-                    emailSender: { connect: { userId: sender.userId } },
-                    emailReceiver: { connect: { userId: receiver.userId } }
-                }
+            await db_1.Email.create({
+                emailSubject: parsed.subject,
+                emailBody: parsed.text,
+                emailSender: sender.id,
+                emailReceiver: receiver.id,
             });
             callback(null);
         });
@@ -79,9 +62,6 @@ const server = new smtp_server_1.SMTPServer({
         console.log(`Client disconnected: ${session.localAddress}`);
     },
 });
-function hello() {
-    console.log("hello");
-}
 server.on("error", (err) => {
     console.error(err);
 });

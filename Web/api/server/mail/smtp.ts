@@ -1,25 +1,24 @@
 import dotenv from "dotenv"
+import mongoose from "mongoose"
 import { SMTPServer } from "smtp-server"
 import { simpleParser } from "mailparser"
-import { PrismaClient } from "@prisma/client"
 import type { AddressObject } from "mailparser"
+
+import { Email, EmailUser } from "../database/mongo/db"
+import type { IEmailUser, IEmail  } from "../database/mongo/db"
 
 dotenv.config()
 
-const DATABASE_URL = process.env.POSTGRE_DATABASE_URL;
+const DATABASE_URL = process.env.MONGO_DATABASE_URL ?? "mongodb://127.0.0.1:27017/videostreaming"
 
 if (!DATABASE_URL) {
   throw new Error("Database URL required")
 }
 
-const databaseUrl = new URL(DATABASE_URL)
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: databaseUrl.toString(),
-    },
-  },
-})
+mongoose.connect(DATABASE_URL)
+  .catch((error) => {
+    console.error(`Error connecting to MongoDB: ${error}`);
+  })
 
 const PORT = 25
 
@@ -37,9 +36,7 @@ const server = new SMTPServer({
     console.log(`Authentication: ${username}`);
 
     // Verifier le mot de passe
-    const user = await prisma.emailUser.findUnique({
-      where: { userEmail: username }
-    })
+    const user = await EmailUser.findOne({ userEmail: username }) as IEmailUser
 
     if (!user)
       return callback(new Error("User not found"))
@@ -57,11 +54,11 @@ const server = new SMTPServer({
         throw new Error("Sender is undefined")
 
       // Trouver ou créé l'utilisateur expéditeur
-      let sender = await prisma.emailUser.upsert({
-        where: { userEmail: parsed.from.value[0].address },
-        update: {},
-        create: { userEmail: parsed.from.value[0].address, userPassword: "default"}
-      })
+      let sender = await EmailUser.findOneAndUpdate(
+        { userEmail: parsed.from.value[0].address },
+        { $setOnInsert: { userEmail: parsed.from.value[0].address, userPassword: "default" } },
+        { upsert: true, new: true },
+      ) as IEmailUser
 
       const destination = parsed.to as AddressObject
 
@@ -69,37 +66,31 @@ const server = new SMTPServer({
         throw new Error("Receiver is undefined")
 
       // Trouver ou créé l'utilisateur destinataire
-      let receiver = await prisma.emailUser.upsert({
-        where: { userEmail: destination.value[0].address },
-        update: {},
-        create: { userEmail: destination.value[0].address, userPassword: "default"}
-      })
+      let receiver = await EmailUser.findOneAndUpdate(
+        { userEmail: destination.value[0].address },
+        { $setOnInsert: { userEmail: destination.value[0].address, userPassword: "default" } },
+        { upsert: true, new: true },
+      ) as IEmailUser
 
       if (!parsed.subject || !parsed.text)
         throw new Error("Email subject or body is undefined")
 
       // Stocker l'email dans la base de données
-      await prisma.email.create({
-        data: {
-          emailSubject: parsed.subject,
-          emailBody: parsed.text,
-          emailSender: { connect: { userId: sender.userId } },
-          emailReceiver: { connect: { userId: receiver.userId } }
-        }
-      })
+      await Email.create({
+        emailSubject: parsed.subject,
+        emailBody: parsed.text,
+        emailSender: sender.id,
+        emailReceiver: receiver.id,
+      } as IEmail)
 
       callback(null)
-    })
+    }) 
   },
   onClose(session, callback) {
     console.log(`Client disconnected: ${session.localAddress}`);
     // callback(null)
   },
 })
-
-function hello() {
-  console.log("hello");
-}
 
 server.on("error", (err) => {
   console.error(err);

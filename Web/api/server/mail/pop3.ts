@@ -1,7 +1,9 @@
 import net from "node:net"
 import dotenv from "dotenv"
-import { PrismaClient } from "@prisma/client"
-import type { EmailUser } from "@prisma/client"
+import mongoose from "mongoose"
+
+import { EmailUser, Email } from "../database/mongo/db"
+import type { IEmailUser  } from "../database/mongo/db"
 
 type DynamicObject<K extends string | number | symbol, V> = {
  [key in K]: V
@@ -9,26 +11,22 @@ type DynamicObject<K extends string | number | symbol, V> = {
 
 type State = {
   isAuthenticated: boolean,
-  user: EmailUser | null,
-  uid: DynamicObject<string, number>,
+  user: IEmailUser | null,
+  uid: DynamicObject<string, string>,
 }
 
 dotenv.config()
 
-const DATABASE_URL = process.env.POSTGRE_DATABASE_URL;
+const DATABASE_URL = process.env.MONGO_DATABASE_URL ?? "mongodb://127.0.0.1:27017/videostreaming"
 
 if (!DATABASE_URL) {
   throw new Error("Database URL required")
 }
 
-const databaseUrl = new URL(DATABASE_URL)
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: databaseUrl.toString(),
-    },
-  },
-})
+mongoose.connect(DATABASE_URL)
+  .catch((error) => {
+    console.error(`Error connecting to MongoDB: ${error}`);
+  })
 
 const PORT = 110
 
@@ -84,9 +82,7 @@ async function handleUser(state: State, params: string[], callback: Function) {
     return callback("-ERR invalid USER command")
 
   // Chercher l'utilisateur dans la base de données
-  const user = await prisma.emailUser.findUnique({
-    where: { userEmail: params[0] }
-  })
+  const user = await EmailUser.findOne({ userEmail: params[0] })
 
   if (!user)
     return callback("-ERR User not found")
@@ -103,10 +99,7 @@ async function handlePass(state: State, params: string[], callback: Function) {
     return callback("-ERR [AUTH] Invalid PASS command")
 
     // Verifier le mot de passe dans la base de données
-    const user = await prisma.emailUser.findUnique({
-      where: { userEmail: state.user.userEmail },
-      select: { userPassword: true }
-    })
+    const user = await EmailUser.findOne({ userEmail: state.user.userEmail })
 
     if (!user || user.userPassword !== params[0])
       return callback("-ERR [AUTH] Authentication failed")
@@ -124,11 +117,9 @@ async function handleStat(state: State, params: string[], callback: Function) {
     return callback("-ERR Not authenticated")
 
   // Chercher le message dans la base de données
-  const emails = await prisma.email.findMany({
-    where: {
-      emailReceiverId: state.user?.userId,
-      emailDeleted: false,
-    }
+  const emails = await Email.find({
+    emailReceiver: state.user?.id,
+    emailDeleted: false,
   })
   
   const count = emails.length
@@ -144,15 +135,15 @@ async function handleUidl(state: State, paramas: string[], callback: Function) {
   if (!state.isAuthenticated)
     return callback("-ERR Not authenticated")
 
-  const emails = await prisma.email.findMany({
-    where: {
-      emailReceiverId: state.user?.userId,
-      emailDeleted: false,
-    }
+  // const emails = await prisma.email.findMany({
+  const emails = await Email.find({
+    emailReceiver: state.user?.id,
+    emailDeleted: false,
   })
+
   const response = emails.map((email, index) => {
-    state.uid[index + 1] = email.emailId
-    return `${index + 1} ${email.emailId}`
+    state.uid[index + 1] = email.id
+    return `${index + 1} ${email.id}`
   }).join("\r\n")
 
   callback(`+OK ${emails.length} messages\r\n${response}\r\n.`)
@@ -169,12 +160,11 @@ async function handleTop(state: State, params: string[], callback: Function) {
 
   const emailId = parseInt(params[0], 10)
   const numberOfLines = parseInt(params[1], 10)
-  const email = await prisma.email.findUnique({
-    where: {
-      emailId: emailId,
-      emailReceiverId: state.user?.userId,
-      emailDeleted: false,
-    }
+
+  const email = await Email.findOne({
+    _id: emailId,
+    emailReceiver: state.user?.id,
+    emailDeleted: false,
   })
 
   if (!email)
@@ -197,11 +187,9 @@ async function handleList(state: State, params: string[], callback: Function) {
     return callback("-ERR Not authenticated")
 
   // Recuperer la liste des messages dans la base de données
-  const emails = await prisma.email.findMany({
-    where: {
-      emailReceiverId: state.user?.userId,
-      emailDeleted: false,
-    }
+  const emails = await Email.find({
+    emailReceiver: state.user?.id,
+    emailDeleted: false,
   })
 
   const response = emails.map((email, index) => `${index + 1} ${email.emailBody.length}`).join("\r\n")
@@ -218,20 +206,14 @@ async function handleRetr(state: State, params: string[], callback: Function) {
     return callback("-ERR Invalid RETR Command")
 
   const emailId = state.uid[params[0]]
-  const email = await prisma.email.findUnique({
-    where: {
-      emailId: emailId,
-    },
-    include: {
-      emailSender: true
-    }
-  })
+  const email = await Email.findOne({ _id: emailId })
+  const emailSender = await EmailUser.findOne({ _id: email?.emailSender })
 
-  if (!email)
+  if (!email || !emailSender)
     return callback("-ERR No such message")
 
   const response = 
-    `From: ${email.emailSender.userEmail}\r\n` +
+    `From: ${emailSender.userEmail}\r\n` +
     `Subject: ${email.emailSubject}\r\n\r\n` +
     `${email.emailBody}`
 
@@ -246,14 +228,10 @@ async function handleDele(state: State, params: string[], callback: Function) {
     return callback("-ERR Invalid DELE command")
 
   const emailId = parseInt(params[0], 10)
-  const email = await prisma.email.update({
-    where: {
-      emailId: emailId,
-    },
-    data: {
-      emailDeleted: true,
-    }
-  })
+  const email = await Email.updateOne(
+    { _id: emailId },
+    { emailDeleted: true },
+  )
 
   if (!email)
     return callback("-ERR No such message")

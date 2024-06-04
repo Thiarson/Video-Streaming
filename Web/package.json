@@ -7,10 +7,11 @@
     "build": "node build.js",
     "dev": "nodemon",
     "bundle": "webpack",
-    "smtp": "node dist/lib/mail/smtp.js",
-    "pop3": "node dist/lib/mail/pop3.js",
-    "db:seed": "node dist/database/postgre/seed.js",
-    "db:pull": "node dist/database/postgre/pull.js"
+    "smtp": "node dist/server/mail/smtp.js",
+    "pop3": "node dist/server/mail/pop3.js",
+    "postgre:seed": "node dist/database/postgre/seed.js",
+    "postgre:pull": "node dist/database/postgre/pull.js",
+    "mongo:seed": "node dist/server/database/mongo/seed.js"
   },
   "author": "Thiarson",
   "license": "ISC",
