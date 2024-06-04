@@ -1,19 +1,19 @@
 import { useRef, useState } from "react"
 import { MdChevronLeft, MdChevronRight } from "react-icons/md"
 import type { FC } from "react"
-import type { VideoContent } from '@prisma/client'
+import type { DirectContent, VideoContent } from '@prisma/client'
 
 import VideoCard from "./VideoCard"
 import { useInfo } from "../utils/context/info"
 
 type Props = {
-  videoList: VideoContent[],
+  videoList: (VideoContent | DirectContent)[],
   category: string,
 }
 
 const VideoList: FC<Props> = ({ videoList, category }) => {
   const list = useRef<HTMLDivElement>(null)
-  const { isVideoBuyed } = useInfo()
+  const { isVideoBuyed, isDirectBuyed } = useInfo()
   const [ count, setCount ] = useState(0)
   const totalWidth = videoList.length * 260
 
@@ -41,9 +41,16 @@ const VideoList: FC<Props> = ({ videoList, category }) => {
         <div className="group/chevron flex relative">
           <MdChevronLeft onClick={slideLeft} className="bg-black text-white rounded-full absolute z-20 self-center opacity-50 hover:opacity-100 cursor-pointer hidden group-hover/chevron:block" size={30}/>
           <div ref={list} className="grid grid-flow-col px-12 py-4 gap-4 group/chevron transition-all duration-500 relative left-0">
-            {videoList.map((video, index) => {
-              const buyed = isVideoBuyed[video.videoId]
-              return <VideoCard key={index} content={video} category={category} isBuyed={buyed}/>
+            {videoList.map((content, index) => {
+              if (category === "Rediffusion") {
+                const direct = content as DirectContent
+                const buyed = isDirectBuyed[direct.directId]
+                return <VideoCard key={index} content={direct} category={category} isBuyed={buyed}/>
+              } else {
+                const video = content as VideoContent
+                const buyed = isVideoBuyed[video.videoId]
+                return <VideoCard key={index} content={video} category={category} isBuyed={buyed}/>
+              }
             })}
           </div>
           <MdChevronRight onClick={slideRight} className="bg-black text-white rounded-full absolute z-20 right-0 self-center opacity-50 hover:opacity-100 cursor-pointer hidden group-hover/chevron:block" size={30}/>

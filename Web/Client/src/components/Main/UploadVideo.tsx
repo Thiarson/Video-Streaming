@@ -9,7 +9,7 @@ import Spinner from "../assets/Spinner"
 import InputError from "../assets/InputError"
 import Invalid from "../assets/Error"
 import { inputCheck, isFieldNull, showError } from "../utils/form-verif"
-import { directSpec, videoSpec } from "../utils/media-spec"
+import { directSpec, videoSpec } from "../utils/helpers/media-spec"
 import { useError } from "../utils/hooks/useError"
 import { closeModal } from "../utils/features/modal"
 import { useClient } from "../utils/context/client"
@@ -163,6 +163,7 @@ function UploadVideo() {
         if (timeout.current === undefined) {
           timeout.current = setTimeout(() => {
             dispatch(closeModal("uploadVideo"))
+            window.location.reload()
           }, 3000);
         }
       } else {
@@ -171,8 +172,8 @@ function UploadVideo() {
     } catch (e) {
       console.error(e);
       return <Invalid code="502" action="reload">Réessayer</Invalid>
-    }    
-  }  
+    }
+  }
 
   return (
     <>

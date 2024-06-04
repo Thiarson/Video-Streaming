@@ -6,7 +6,7 @@ import { useRef, type FC } from "react"
 import type { DirectContent, VideoContent } from "@prisma/client"
 
 import { baseURL } from "../utils/fetch-server"
-import { directSpec } from "../utils/media-spec"
+import { directSpec } from "../utils/helpers/media-spec"
 import { openModal } from "../utils/features/modal"
 import { useInfo } from "../utils/context/info"
 
@@ -60,7 +60,8 @@ const VideoCard: FC<Props> = ({ content, category: type, isBuyed }) => {
   }
 
   const watch = () => {
-    navigate(`/watch/${id.current}`)
+    const watch = type === "Rediffusion" ? "watch-direct" : "watch-video"
+    navigate(`/${watch}/${id.current}`)
   } 
 
   const handleOpenInfo = () => {

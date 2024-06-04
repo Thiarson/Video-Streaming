@@ -95,6 +95,12 @@ contentService.allContent = async (userId) => {
     allRediff.forEach(({ direct }) => {
         if (direct.userId !== userId)
             rediff.push(direct);
+        if (direct.directPrice === '0')
+            isDirectBuyed[direct.directId] = true;
+        else if (directBuyed[direct.directId] === undefined)
+            isDirectBuyed[direct.directId] = false;
+        else
+            isDirectBuyed[direct.directId] = true;
     });
     const allUser = await db_1.default.userInfo.findMany({
         where: {
@@ -123,9 +129,6 @@ contentService.uploadVideo = async (formData) => {
     let name = title[0];
     name = (0, utils_1.replaceSpecialChar)(name);
     const now = new Date();
-    const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-    const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-    const publication = `${date} ${time}`;
     const videoId = `${(0, uuid_1.v4)()}_${name}_${now.getTime()}`;
     const videoUrl = `/streams/${userId}/videos/${videoId}/${name}.m3u8`;
     const inPath = `./data/${userId}/${videoId}`;
@@ -210,5 +213,82 @@ contentService.getVideo = async (videoId, userId) => {
     else
         isBuyed = buyed ? true : false;
     return { isFree, isOwned, isBuyed, video };
+};
+contentService.getDirect = async (directId, userId) => {
+    let isFree = false;
+    let isBuyed = false;
+    let isOwned = false;
+    let direct = await db_1.default.directContent.findUnique({
+        where: { directId: directId }
+    });
+    if (!direct)
+        throw new Error("Direct not found");
+    const buyed = await db_1.default.assistDirect.findFirst({
+        where: {
+            directId: directId,
+            userId: userId,
+        }
+    });
+    if (userId === direct.userId)
+        isOwned = true;
+    else if (direct.directPrice === '0')
+        isFree = true;
+    else
+        isBuyed = buyed ? true : false;
+    return { isFree, isOwned, isBuyed, direct };
+};
+contentService.buyVideo = async (videoId, userId) => {
+    const user = await db_1.default.userInfo.findUnique({
+        where: { userId: userId }
+    });
+    if (!user)
+        throw new Error("User not found");
+    const video = await db_1.default.videoContent.findUnique({
+        where: { videoId: videoId }
+    });
+    if (!video)
+        throw new Error("Video not found");
+    const price = parseInt(video.videoPrice);
+    let money = parseInt(user.userWallet);
+    money = money - price;
+    if (money < 0)
+        throw new Error("Not enough money in wallet");
+    await db_1.default.buyVideo.create({
+        data: {
+            videoId: videoId,
+            userId: userId,
+        }
+    });
+    await db_1.default.userInfo.update({
+        where: { userId: userId },
+        data: { userWallet: money.toString() }
+    });
+};
+contentService.assistDirect = async (directId, userId) => {
+    const user = await db_1.default.userInfo.findUnique({
+        where: { userId: userId }
+    });
+    if (!user)
+        throw new Error("User not found");
+    const direct = await db_1.default.directContent.findUnique({
+        where: { directId: directId }
+    });
+    if (!direct)
+        throw new Error("Direct not found");
+    const price = parseInt(direct.directPrice);
+    let money = parseInt(user.userWallet);
+    money = money - price;
+    if (money < 0)
+        throw new Error("Not enough money in wallet");
+    await db_1.default.assistDirect.create({
+        data: {
+            directId: directId,
+            userId: userId,
+        }
+    });
+    await db_1.default.userInfo.update({
+        where: { userId: userId },
+        data: { userWallet: money.toString() }
+    });
 };
 exports.default = contentService;

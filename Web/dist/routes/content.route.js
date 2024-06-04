@@ -128,4 +128,70 @@ contentRouter.get("/get-video/:videoId", auth_1.default, async function (req, re
         });
     }
 });
+contentRouter.get("/get-direct/:directId", auth_1.default, async function (req, res) {
+    try {
+        const { data } = req.body;
+        const { directId } = req.params;
+        const { isFree, isOwned, isBuyed, direct } = await content_service_1.default.getDirect(directId, data);
+        res.json({
+            success: true,
+            data: {
+                direct: direct,
+                isFree: isFree,
+                isBuyed: isBuyed,
+                isOwned: isOwned,
+            }
+        });
+    }
+    catch (e) {
+        if (e instanceof Error)
+            console.error(e.message);
+        else
+            console.error(`Unepected error: ${e}`);
+        res.json({
+            success: false,
+            data: null,
+        });
+    }
+});
+contentRouter.put("/buy-video", auth_1.default, async function (req, res) {
+    try {
+        const { data, contentId } = req.body;
+        await content_service_1.default.buyVideo(contentId, data);
+        res.json({
+            success: true,
+            data: null,
+        });
+    }
+    catch (e) {
+        if (e instanceof Error)
+            console.error(e.message);
+        else
+            console.error(`Unepected error: ${e}`);
+        res.json({
+            success: false,
+            data: null,
+        });
+    }
+});
+contentRouter.put("/assist-direct", auth_1.default, async function (req, res) {
+    try {
+        const { data, contentId } = req.body;
+        await content_service_1.default.assistDirect(contentId, data);
+        res.json({
+            success: true,
+            data: null,
+        });
+    }
+    catch (e) {
+        if (e instanceof Error)
+            console.error(e.message);
+        else
+            console.error(`Unepected error: ${e}`);
+        res.json({
+            success: false,
+            data: null,
+        });
+    }
+});
 exports.default = contentRouter;

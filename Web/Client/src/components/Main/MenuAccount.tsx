@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { GoSignOut } from "react-icons/go"
 import type { FC } from "react"
 
-import storage from "../utils/local-storage"
+import storage from "../utils/helpers/local-storage"
 import { useClient } from "../utils/context/client"
 import { useMenu } from "../utils/context/menu"
 import { baseURL } from "../utils/fetch-server"

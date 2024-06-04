@@ -49,7 +49,7 @@ function Carousel() {
   }
 
   const handlePlayVideo = () => {
-    navigate(`/watch/${slides.current[video].videoId}`)
+    navigate(`/watch-video/${slides.current[video].videoId}`)
   }
 
   const handleBuyVideo = () => {

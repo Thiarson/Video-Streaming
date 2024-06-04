@@ -9,7 +9,8 @@ import Button from "../assets/Button"
 import { closeModal, openModal } from "../utils/features/modal"
 import { useInfo } from "../utils/context/info"
 import { baseURL } from "../utils/fetch-server"
-import { directSpec } from "../utils/media-spec"
+import { directSpec } from "../utils/helpers/media-spec"
+import { format } from "../utils/helpers/format"
 
 const Info: FC = () => {
   const navigate = useNavigate()
@@ -20,7 +21,7 @@ const Info: FC = () => {
   const isBuyed = useRef(false)
   const thumbnail = useRef("")
   const title = useRef("")
-  const category = useRef("")
+  const categoryOrDate = useRef("")
   const duration = useRef("")
   const playlist = useRef<string | null>(null)
   const price = useRef("")
@@ -34,7 +35,7 @@ const Info: FC = () => {
     id.current = info.current.videoId
     thumbnail.current = info.current.videoThumbnail
     title.current = info.current.videoTitle
-    category.current = info.current.videoCategory
+    categoryOrDate.current = info.current.videoCategory
     isBuyed.current = isVideoBuyed[info.current.videoId]
     playlist.current = info.current.videoPlaylist
     price.current = info.current.videoPrice
@@ -48,7 +49,7 @@ const Info: FC = () => {
     id.current = info.current.directId
     thumbnail.current = info.current.directThumbnail
     title.current = info.current.directTitle
-    category.current = "Direct"
+    categoryOrDate.current = format(info.current.directDate.toString())
     isBuyed.current = isDirectBuyed[info.current.directId]
     price.current = info.current.directPrice
     description.current = info.current.directDescription
@@ -67,13 +68,18 @@ const Info: FC = () => {
   }
 
   const handleBuyVideo = () => {
-
     dispatch(openModal("buy"))
   }
 
   const watch = () => {
+    const watch = type === "video" ? "watch-video" : "watch-direct"
     dispatch(closeModal("info"))
-    navigate(`/watch/${id.current}`)
+    navigate(`/${watch}/${id.current}`)
+  }
+
+  const otherProfil = () => {
+    dispatch(closeModal("info"))
+    navigate(`/other-profil/${user.userId}`)
   }
 
   return (
@@ -82,7 +88,7 @@ const Info: FC = () => {
         <div className="transform duration-0 relative flex-auto bg-zinc-900 drop-shadow-md">
           <div>
             <div className="flex px-4 pt-3 pb-2">
-              <div className="flex items-center gap-3 cursor-pointer">
+              <div className="flex items-center gap-3 cursor-pointer" onClick={otherProfil}>
                 <img className="flex h-10 w-10 ml-2 overflow-hidden rounded-full" src={baseURL+user.userPhoto} alt="Profil"/>
                 <p className="text-lg text-white font-semibold">{user.userPseudo}</p>
               </div>
@@ -98,7 +104,7 @@ const Info: FC = () => {
                 {title.current}
               </p>
               <div className="flex gap-2 text-white">
-                <p>{category.current}</p>
+                <p>{categoryOrDate.current}</p>
                 <span>-</span>
                 <p>{duration.current}</p>
                 <span>-</span>

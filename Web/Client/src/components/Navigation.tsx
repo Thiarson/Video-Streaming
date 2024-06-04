@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import Home from "./Main/Home"
-import MediaPlayer from "./Player/MediaPlayer"
+import VideoPlayer from "./Player/VideoPlayer"
+import DirectPlayer from "./Player/DirectPlayer"
 import Error from "./assets/Error"
 
 function Navigation() {
@@ -9,7 +10,8 @@ function Navigation() {
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<Home/>}/>
-        <Route path="watch/:videoId" element={<MediaPlayer/>}/>
+        <Route path="watch-video/:videoId" element={<VideoPlayer/>}/>
+        <Route path="watch-direct/:directId" element={<DirectPlayer/>}/>
         <Route path="*" element={<Error code={"404"}/>}/>
         <Route path="/" element={<Navigate to="home"/>}/>
       </Routes>

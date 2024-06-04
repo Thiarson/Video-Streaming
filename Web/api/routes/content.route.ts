@@ -155,4 +155,88 @@ contentRouter.get("/get-video/:videoId", auth, async function (req, res) {
   }
 })
 
+/** 
+ * Route to get the specified direct
+ */
+contentRouter.get("/get-direct/:directId", auth, async function (req, res) {
+  try {
+    const { data } = req.body
+    const { directId } = req.params
+    
+    const { isFree, isOwned, isBuyed, direct } = await contentService.getDirect(directId, data)
+
+    res.json({ 
+      success: true,
+      data: {
+        direct: direct,
+        isFree: isFree,
+        isBuyed: isBuyed,
+        isOwned: isOwned,
+      }
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
+/** 
+ * Route to buy video
+ */
+contentRouter.put("/buy-video", auth, async function (req, res) {
+  try {
+    const { data, contentId } = req.body
+    
+    await contentService.buyVideo(contentId, data)
+
+    res.json({ 
+      success: true,
+      data: null,
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
+/** 
+ * Route to assist to a  direct
+ */
+contentRouter.put("/assist-direct", auth, async function (req, res) {
+  try {
+    const { data, contentId } = req.body
+    
+    await contentService.assistDirect(contentId, data)
+
+    res.json({ 
+      success: true,
+      data: null,
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
 export default contentRouter

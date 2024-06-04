@@ -10,7 +10,7 @@ import CodeVerification from './CodeVerification';
 import Error from "../assets/Error"
 import DbError from "../assets/DbError"
 import InputError from "../assets/InputError"
-import storage from "../utils/local-storage"
+import storage from "../utils/helpers/local-storage"
 import { openModal, closeModal } from "../utils/features/modal"
 import { useClient } from "../utils/context/client"
 import { useError } from "../utils/hooks/useError"

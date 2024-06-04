@@ -8,7 +8,7 @@ import Field from "../assets/Field"
 import Popup from "../assets/Popup"
 import InputError from "../assets/InputError"
 import Invalid from "../assets/Error"
-import { directSpec } from "../utils/media-spec"
+import { directSpec } from "../utils/helpers/media-spec"
 import { useError } from "../utils/hooks/useError"
 import { closeModal } from "../utils/features/modal"
 import { useClient } from "../utils/context/client"
@@ -133,6 +133,7 @@ const ProgramDirect: FC = () => {
         if (timeout.current === undefined) {
           timeout.current = setTimeout(() => {
             dispatch(closeModal("programDirect"))
+            window.location.reload()
           }, 3000);
         }
       } else {

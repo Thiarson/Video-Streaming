@@ -22,6 +22,7 @@ const CodeVerification: FC<Props> = ({ data, onClose, onRetry, onValid }) => {
   const second = useRef<HTMLInputElement>(null)
   const third = useRef<HTMLInputElement>(null)
   const fourth = useRef<HTMLInputElement>(null)
+  const fields = [ first, second, third, fourth ]
   const [ visible, setVisible ] = useState(false)
   const [ status, setStatus ] = useState<CodeVerifStatus>("idle")
   const [ stop, setStop ] = useState(false)
@@ -121,10 +122,8 @@ const CodeVerification: FC<Props> = ({ data, onClose, onRetry, onValid }) => {
                 </Countdowm>
               </div>
               <div className="flex flex-row justify-around w-full">
-                <OneField name="first" ref={first}/>
-                <OneField name="second" ref={second}/>
-                <OneField name="third" ref={third}/>
-                <OneField name="fourth" ref={fourth}/>
+                {fields.map((field, index) =>
+                  <OneField key={index} ref={field}/>)}
               </div>
               <p><button onClick={handleRetry} className="code-resend-link hover:underline">Renvoyer le code</button></p>
             </div>

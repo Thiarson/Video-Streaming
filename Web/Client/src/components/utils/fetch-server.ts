@@ -1,9 +1,10 @@
-import storage from "./local-storage"
+import storage from "./helpers/local-storage"
 import type { FetchOptions, Method } from "./types/fetch"
 
 type FetchMethod = {
   get: Method,
   post: Method,
+  put: Method,
 }
 
 const serverInfo = {
@@ -28,6 +29,7 @@ const defaultOptions = {
 const methods: FetchMethod = {
   get: "GET",
   post: "POST",
+  put: "PUT",
 }
 
 const jwt = { "Authorization": `Bearer ${storage.token}` }
@@ -95,6 +97,13 @@ const fetchServer = {
   },
   post: async (url: string, options: FetchOptions = {}) => {
     const method = methods.post
+    const headers = { ...jwt, ...options.headers }
+    const body = { ...options.body }
+
+    return fetchWithTimeout(url, { method, headers, body })
+  },
+  put: async (url: string, options: FetchOptions = {}) => {
+    const method = methods.put
     const headers = { ...jwt, ...options.headers }
     const body = { ...options.body }
 

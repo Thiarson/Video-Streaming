@@ -38,9 +38,7 @@ const server = new SMTPServer({
 
     // Verifier le mot de passe
     const user = await prisma.emailUser.findUnique({
-      where: {
-        userEmail: username,
-      }
+      where: { userEmail: username }
     })
 
     if (!user)

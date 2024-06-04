@@ -156,6 +156,13 @@ contentService.allContent = async(userId: string) => {
   allRediff.forEach(({ direct }) => {
     if (direct.userId !== userId)
       rediff.push(direct)
+
+    if (direct.directPrice === '0')
+      isDirectBuyed[direct.directId] = true
+    else if (directBuyed[direct.directId] === undefined)
+      isDirectBuyed[direct.directId] = false
+    else
+      isDirectBuyed[direct.directId] = true
   })
 
   // Get all user
@@ -197,9 +204,6 @@ contentService.uploadVideo = async (formData: [UploadFields, UploadFile]) => {
   name = replaceSpecialChar(name)
 
   const now = new Date()
-  const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
-  const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
-  const publication = `${date} ${time}`
   const videoId = `${uuidv4()}_${name}_${now.getTime()}`
   const videoUrl = `/streams/${userId}/videos/${videoId}/${name}.m3u8`
   const inPath = `./data/${userId}/${videoId}`
@@ -313,6 +317,116 @@ contentService.getVideo = async (videoId: string, userId: string) => {
     isBuyed = buyed ? true : false
 
   return { isFree, isOwned, isBuyed, video }
+}
+
+/**
+ * Get the specified direct
+ */
+contentService.getDirect = async (directId: string, userId: string) => {
+  let isFree = false
+  let isBuyed = false
+  let isOwned = false
+
+  let direct = await prisma.directContent.findUnique({
+    where: { directId: directId }
+  })
+
+  if (!direct)
+    throw new Error("Direct not found")
+
+  const buyed = await prisma.assistDirect.findFirst({
+    where: {
+      directId: directId,
+      userId: userId,
+    }
+  })
+
+  if (userId === direct.userId)
+    isOwned = true
+  else if (direct.directPrice === '0')
+    isFree = true
+  else
+    isBuyed = buyed ? true : false
+
+  return { isFree, isOwned, isBuyed, direct }
+}
+
+/**
+ * Buy the specified video
+ */
+contentService.buyVideo = async (videoId: string, userId: string) => {
+  const user = await prisma.userInfo.findUnique({
+    where: { userId: userId }
+  })
+
+  if (!user)
+    throw new Error("User not found")
+
+  const video = await prisma.videoContent.findUnique({
+    where: { videoId: videoId }
+  })
+
+  if (!video)
+    throw new Error("Video not found")
+
+  const price = parseInt(video.videoPrice)
+  let money = parseInt(user.userWallet)
+
+  money = money - price
+
+  if (money < 0)
+    throw new Error("Not enough money in wallet")
+
+  await prisma.buyVideo.create({
+    data: {
+      videoId: videoId,
+      userId: userId,
+    }
+  })
+
+  await prisma.userInfo.update({
+    where: { userId: userId },
+    data: { userWallet: money.toString() }
+  })
+}
+
+/**
+ * Assist to the specified direct
+ */
+contentService.assistDirect = async (directId: string, userId: string) => {
+  const user = await prisma.userInfo.findUnique({
+    where: { userId: userId }
+  })
+
+  if (!user)
+    throw new Error("User not found")
+
+  const direct = await prisma.directContent.findUnique({
+    where: { directId: directId }
+  })
+
+  if (!direct)
+    throw new Error("Direct not found")
+
+  const price = parseInt(direct.directPrice)
+  let money = parseInt(user.userWallet)
+
+  money = money - price
+
+  if (money < 0)
+    throw new Error("Not enough money in wallet")
+
+  await prisma.assistDirect.create({
+    data: {
+      directId: directId,
+      userId: userId,
+    }
+  })
+
+  await prisma.userInfo.update({
+    where: { userId: userId },
+    data: { userWallet: money.toString() }
+  })
 }
 
 export default contentService

@@ -2,7 +2,7 @@ import type { DirectContent, VideoPlaylist, UserInfo, VideoContent } from "@pris
 import type { Code } from "./data"
 import type { DynamicObject } from "./object"
 
-export type Method = "GET" | "POST"
+export type Method = "GET" | "POST" | "PUT"
 
 export type FetchOptions = {
   method?: Method,
