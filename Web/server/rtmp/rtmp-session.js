@@ -1102,7 +1102,7 @@ class RtmpSession {
     this.respondCreateStream(invokeMessage.transId);
   }
 
-  onPublish(invokeMessage) {
+  async onPublish(invokeMessage) {
     if (typeof invokeMessage.streamName !== 'string') {
       return;
     }
@@ -1131,6 +1131,44 @@ class RtmpSession {
       Logger.log(`[rtmp publish] NetConnection is publishing. id=${this.id} streamPath=${this.publishStreamPath} streamId=${this.publishStreamId}`);
       this.sendStatusMessage(this.publishStreamId, 'error', 'NetStream.Publish.BadConnection', 'Connection already publishing');
     } else {
+      // Vérification du stream path et de la clé
+      const apps = []
+      const path = this.publishStreamPath.split("/")
+      const stream = path[1]
+      const key = path[2]
+
+      this.config.trans.tasks.forEach((task) => {
+        apps.push(task.app)
+      });
+
+      if (apps.indexOf(stream) === -1) {
+        console.error(`Stream path is invalid: ${stream}`);
+        this.reject()
+        return
+      }
+
+      const direct = await globalThis.prisma.directContent.findFirst({ where: { directKey: key } })
+      const rediff = await globalThis.prisma.rediffusionContent.findUnique({ where: { rediffusionId: direct.directId } })
+      
+      if (direct === null) {
+        console.error(`Stream key is invalid: ${key}`);
+        this.reject()
+        return
+      }
+
+      if (direct.directInProgress === false) {
+        console.error(`Content already diffused: ${direct.directTitle}`);
+        this.reject()
+        return
+      }
+
+      if (rediff !== null) {
+        console.error(`Rediffusion already exist: ${direct.directTitle}`);
+        this.reject()
+        return
+      }
+      //
+
       Logger.log(`[rtmp publish] New stream. id=${this.id} streamPath=${this.publishStreamPath} streamId=${this.publishStreamId}`);
       context.publishers.set(this.publishStreamPath, this.id);
       this.isPublishing = true;

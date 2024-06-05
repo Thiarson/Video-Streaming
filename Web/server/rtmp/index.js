@@ -30,7 +30,7 @@ const config = {
     ffmpeg: ffmpegPath,
     tasks: [
       {
-        app: "streaming",
+        app: "videostreaming",
         hls: true,
         hlsFlags: "[hls_time=5:hls_list_size=2:hls_flags=append_list]",
       },
