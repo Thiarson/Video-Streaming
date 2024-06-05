@@ -8,7 +8,7 @@ import streamRouter from "./stream.route";
 
 const src = path.dirname(__dirname)
 const root = path.dirname(src)
-const server = path.join(root, 'server')
+const server = path.join(root, 'server/public')
 
 module.exports = (app: Express) => {
   // Endpoints for users

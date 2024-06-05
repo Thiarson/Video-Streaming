@@ -7,7 +7,7 @@ try {
 
   const build = path.join(__dirname, 'build')
   const web = path.dirname(__dirname)
-  const server = path.join(web, 'server')
+  const server = path.join(web, 'server/public')
 
   console.log('Removing public directory...')
   fs.rmSync(server, { recursive: true, force: true })

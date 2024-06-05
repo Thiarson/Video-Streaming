@@ -10,7 +10,7 @@ const content_route_1 = __importDefault(require("./content.route"));
 const stream_route_1 = __importDefault(require("./stream.route"));
 const src = node_path_1.default.dirname(__dirname);
 const root = node_path_1.default.dirname(src);
-const server = node_path_1.default.join(root, 'server');
+const server = node_path_1.default.join(root, 'server/public');
 module.exports = (app) => {
     app.use("/api", auth_route_1.default);
     app.use("/api/", content_route_1.default);

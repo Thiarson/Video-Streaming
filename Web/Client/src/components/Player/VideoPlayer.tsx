@@ -21,6 +21,12 @@ const VideoPlayer: FC= () => {
     return fetchServer.get(`/api/get-video/${videoId}`)
   }, { cacheTime: 0, enabled: false })
 
+  const handleClose = () => {
+    hls.current?.stopLoad()
+    hls.current?.detachMedia()
+    hls.current?.destroy()
+  }
+
   useEffect(() => {
     query.refetch()
   }, [])
@@ -44,7 +50,7 @@ const VideoPlayer: FC= () => {
             throw new Error("Media player is null")
         
           if(Hls.isSupported()) {
-            hls.current = new Hls()
+            hls.current = new Hls({ lowLatencyMode: true })
             hls.current.attachMedia(player.current)
             hls.current.loadSource(baseURL+video.current.videoUrl)
           }  
@@ -63,7 +69,7 @@ const VideoPlayer: FC= () => {
   return (
     <div className="h-screen w-screen bg-black">
       <nav className="fixed w-full p-4 z-10 flex gap-8">
-        <Link to="/home"><BsArrowLeft className="text-white" size={40}/></Link>
+        <Link to="/home" onClick={handleClose}><BsArrowLeft className="text-white" size={40}/></Link>
         <div className="w-full flex justify-center"><p className="text-white text-xl md:text-3xl font-semibold">{video.current?.videoTitle}</p></div>
       </nav>
       <video autoPlay controls className="h-full w-full" ref={player}></video>
