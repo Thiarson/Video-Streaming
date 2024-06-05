@@ -1135,7 +1135,7 @@ class RtmpSession {
       const apps = []
       const path = this.publishStreamPath.split("/")
       const stream = path[1]
-      const key = path[2]
+      const key = path[path.length - 1]
 
       this.config.trans.tasks.forEach((task) => {
         apps.push(task.app)
@@ -1148,13 +1148,14 @@ class RtmpSession {
       }
 
       const direct = await globalThis.prisma.directContent.findFirst({ where: { directKey: key } })
-      const rediff = await globalThis.prisma.rediffusionContent.findUnique({ where: { rediffusionId: direct.directId } })
       
       if (direct === null) {
         console.error(`Stream key is invalid: ${key}`);
         this.reject()
         return
       }
+      
+      const rediff = await globalThis.prisma.rediffusionContent.findUnique({ where: { rediffusionId: direct.directId } })
 
       if (direct.directInProgress === false) {
         console.error(`Content already diffused: ${direct.directTitle}`);
