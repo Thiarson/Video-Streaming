@@ -55,7 +55,7 @@ function Carousel() {
   const handleBuyVideo = () => {
     setType("video")
     setInfo(slides.current[video])
-    dispatch(openModal("buy"))
+    dispatch(openModal("buyContent"))
   }
 
   const handleOpenInfo = () => {

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react"
 import type { FC, PropsWithChildren, Dispatch, SetStateAction } from "react"
-import type { DirectContent, UserInfo, VideoContent, VideoPlaylist } from "@prisma/client"
+import type { DirectContent, UserInfo, VideoContent } from "@prisma/client"
 
 import type { DynamicObject } from "../types/object"
 
@@ -12,7 +12,6 @@ export type InfoValue = {
   users: DynamicObject<string, UserInfo>,
   isVideoBuyed: DynamicObject<string, boolean>,
   isDirectBuyed: DynamicObject<string, boolean>,
-  myPlaylists: VideoPlaylist[],
 }
 
 type Props = PropsWithChildren<{value: InfoValue}>
@@ -25,7 +24,6 @@ const InfoContext = createContext<InfoValue>({
   users: {},
   isVideoBuyed: {},
   isDirectBuyed: {},
-  myPlaylists: [],
 })
 
 function useInfo() {

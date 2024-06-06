@@ -29,7 +29,7 @@ const DirectCard: FC<Props> = ({ direct, isBuyed }) => {
   const handleBuyDirect = () => {
     setType("direct")
     setDirect(direct)
-    dispatch(openModal("buy"))
+    dispatch(openModal("buyContent"))
   }
 
   const watch = () => {

@@ -6,6 +6,7 @@ import type { FC, FormEvent } from "react"
 
 import Field from "../assets/Field"
 import Popup from "../assets/Popup"
+import Spinner from "../assets/Spinner"
 import InputError from "../assets/InputError"
 import Invalid from "../assets/Error"
 import { directSpec } from "../utils/helpers/media-spec"
@@ -16,7 +17,6 @@ import { fetchPromise } from "../utils/fetch-server"
 import { showError, inputCheck, isFieldNull } from "../utils/form-verif"
 import type { DynamicObject } from "../utils/types/object"
 import type { FetchVoidResponse } from "../utils/types/fetch"
-import Spinner from "../assets/Spinner"
 
 const now = new Date()
 let month = (now.getMonth() + 1).toString()
@@ -102,7 +102,7 @@ const ProgramDirect: FC = () => {
     if (!user)
       throw new Error("User must not be null")
     if (!inputs.image.files)
-      throw new Error("Video files must not be null")
+      throw new Error("Image files must not be null")
 
     const form = new FormData()
 
@@ -159,7 +159,7 @@ const ProgramDirect: FC = () => {
             <h1 className="text-3xl mb-4 font-semibold">Programmer un direct</h1>
             <hr/>
           </div>
-          <div className="h-[70%] bg-zinc-900 px-12 pt-6 pb-8 rounded-b-md relative overflow-y-scroll scrollbar-hide">
+          <div className="w-[440px] h-[70%] bg-zinc-900 px-12 pt-6 pb-8 rounded-b-md relative overflow-y-scroll scrollbar-hide">
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <Field type="text" name="title" defaultValue="Titre" ref={title}>Titre</Field>
               {inputError["title"] && <InputError>{showError.input.title}</InputError>}

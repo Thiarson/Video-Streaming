@@ -7,17 +7,19 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_fs_1 = __importDefault(require("node:fs"));
 const auth_route_1 = __importDefault(require("./auth.route"));
 const content_route_1 = __importDefault(require("./content.route"));
+const profile_route_1 = __importDefault(require("./profile.route"));
 const stream_route_1 = __importDefault(require("./stream.route"));
 const src = node_path_1.default.dirname(__dirname);
 const root = node_path_1.default.dirname(src);
 const server = node_path_1.default.join(root, 'server/public');
 module.exports = (app) => {
-    app.use("/api", auth_route_1.default);
+    app.use("/api/", auth_route_1.default);
     app.use("/api/", content_route_1.default);
+    app.use("/api/", profile_route_1.default);
     app.use("/streams/", stream_route_1.default);
     app.get("/data/*", (req, res) => {
         try {
-            const format = [".jpg"];
+            const format = [".jpg", ".png", ".jpeg"];
             const extension = node_path_1.default.extname(req.url);
             if (format.indexOf(extension) === -1)
                 throw new Error("Data or image format is invalid");

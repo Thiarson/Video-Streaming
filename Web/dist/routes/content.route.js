@@ -194,4 +194,24 @@ contentRouter.put("/assist-direct", auth_1.default, async function (req, res) {
         });
     }
 });
+contentRouter.get("/user-playlists", auth_1.default, async function (req, res) {
+    try {
+        const { data } = req.body;
+        const playlists = await content_service_1.default.userPlaylists(data);
+        res.json({
+            success: true,
+            data: playlists,
+        });
+    }
+    catch (e) {
+        if (e instanceof Error)
+            console.error(e.message);
+        else
+            console.error(`Unepected error: ${e}`);
+        res.json({
+            success: false,
+            data: null,
+        });
+    }
+});
 exports.default = contentRouter;

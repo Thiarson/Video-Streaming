@@ -239,4 +239,30 @@ contentRouter.put("/assist-direct", auth, async function (req, res) {
   }
 })
 
+/** 
+ * Route get user playlist
+ */
+contentRouter.get("/user-playlists", auth, async function (req, res) {
+  try {
+    const { data } = req.body
+    
+    const playlists = await contentService.userPlaylists(data)
+
+    res.json({ 
+      success: true,
+      data: playlists,
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
 export default contentRouter

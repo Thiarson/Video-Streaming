@@ -41,6 +41,18 @@ export type FetchAllContentResponse = {
   } | null
 }
 
+export type FetchProfileContentResponse = {
+  success: boolean,
+  data: {
+    videos: VideoContent[],
+    videoBuyed: DynamicObject<string, VideoContent>,
+    direct: DirectContent[],
+    directBuyed: DynamicObject<string, DirectContent>,
+    rediffusion: DirectContent[],
+    playlists: DynamicObject<string, VideoPlaylist>,
+  } | null
+}
+
 export type FetchVoidResponse = {
   success: boolean,
   data: null,

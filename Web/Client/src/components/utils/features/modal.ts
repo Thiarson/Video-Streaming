@@ -8,7 +8,10 @@ const initialState = {
   uploadVideo: { isOpen: false },
   programDirect: { isOpen: false },
   info: { isOpen: false },
-  buy: { isOpen: false},
+  buyContent: { isOpen: false},
+  createPlaylist: { isOpen: false },
+  addMoney: { isOpen: false },
+  profileModif: { isOpen: false },
 }
 
 const handleOpenModal = (state: SliceState, action: { type: string, payload: ModalKey }) => {

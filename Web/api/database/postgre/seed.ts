@@ -60,7 +60,7 @@ const userData = [
     userBio : "Créateur de la plateforme !",
     userWallet : "100000",
     userPassword : bcrypt.hashSync("fanantenana", salt),
-    userPhoto : "/data/Thiarson/profil/photo.jpg",
+    userPhoto : "/data/Thiarson/profile/photo.jpg",
   },
   {
     userId: userId.lova,
@@ -83,6 +83,8 @@ const videoId = {
   vadiko: `Vadiko`,
   kirikou: `Kirikou`,
   jalouxine: `Jalouxine`,
+  introduction: `Introduction`,
+  paiso: `Paiso`,
 }
 
 const videoData = [
@@ -95,6 +97,32 @@ const videoData = [
     videoThumbnail : `/data/${userId.thiarson}/videos/${videoId.vadiko}/${videoId.vadiko}.jpg`,
     videoUrl : `/streams/${userId.thiarson}/videos/${videoId.vadiko}/index.m3u8`,
     videoDuration: "00:15:00",
+    userId : userId.thiarson,
+    isValid : true,
+  },
+  {
+    videoId: videoId.introduction,
+    videoTitle : "Tuto Guitare - Intro",
+    videoDescription : "Introduction sur la série de tutoriel en Guitare. Il y a trois niveaux dans ce tutoriel : Débutant, Moyen et Avancé. Ce tutoriel est ouvert à tous ceux qui veulent apprendre à jouer du guitare. La plupart des vidéos sont payants, mais il y aura des tutoriels gratuits !",
+    videoCategory : "Musique",
+    videoPrice : "0",
+    videoThumbnail : `/data/${userId.thiarson}/videos/${videoId.introduction}/${videoId.introduction}.jpg`,
+    videoUrl : `/streams/${userId.thiarson}/videos/${videoId.introduction}/index.m3u8`,
+    videoDuration: "00:15:00",
+    videoPlaylist: "Guitare",
+    userId : userId.thiarson,
+    isValid : true,
+  },
+  {
+    videoId: videoId.paiso,
+    videoTitle : "Paiso Ra-kena",
+    videoDescription : "Le premier tutoriel dans cette série de vidéo est la chanson du groupe Mahaleo qui s'intitule Paiso Ra-kena. Cette vidéo démontre les méthodes utilisées dans ce tutoriel.",
+    videoCategory : "Musique",
+    videoPrice : "200",
+    videoThumbnail : `/data/${userId.thiarson}/videos/${videoId.paiso}/${videoId.paiso}.jpg`,
+    videoUrl : `/streams/${userId.thiarson}/videos/${videoId.paiso}/index.m3u8`,
+    videoDuration: "00:15:00",
+    videoPlaylist: "Guitare",
     userId : userId.thiarson,
     isValid : true,
   },
@@ -191,6 +219,15 @@ const rediffusionData = [
   },
 ]
 
+const playlistData = [
+  {
+    userId: userId.thiarson,
+    playlistTitle: "Guitare",
+    playlistDescription: "Tutoriel de guitare",
+    videoCount: 2,
+  },
+]
+
 async function main() {
   console.log(`Start seeding ...`);
 
@@ -220,6 +257,13 @@ async function main() {
       data: data,
     });
     console.log(`Created rediffusion with id: ${rediffusion.rediffusionId}`);
+  }
+
+  for (const data of playlistData) {
+    const playlist = await prisma.videoPlaylist.create({
+      data: data,
+    });
+    console.log(`Created playlist with title: ${playlist.playlistTitle}`);
   }
 
   console.log(`Seeding finished.`);

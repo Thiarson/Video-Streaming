@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useReducer, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import type { FC, Reducer } from "react"
-import type { DirectContent, UserInfo, VideoContent, VideoPlaylist } from "@prisma/client"
+import type { DirectContent, UserInfo, VideoContent } from "@prisma/client"
 
 import Navbar from "./Navbar"
 import UploadVideo from "./UploadVideo"
@@ -11,6 +11,7 @@ import CreateContent from "./MenuCreateContent"
 import Account from "./MenuAccount"
 import Carousel from "./Carousel"
 import Info from "./Info"
+import BuyContent from "./BuyContent"
 import VideoList from "./VideoList"
 import DirectList from "./DirectList"
 import Loading from "../assets/Loading"
@@ -20,13 +21,11 @@ import { useQuery, useQueryClient } from "react-query"
 import { fetchServer } from "../utils/fetch-server"
 import { MenuProvider } from "../utils/context/menu"
 import { InfoProvider } from '../utils/context/info';
-import { useClient } from "../utils/context/client"
 import type { HomeMenu, HomeMenuType } from "../utils/types/data"
 import type { RootState } from "../utils/context/store"
 import type { FetchAllContentResponse } from "../utils/types/fetch"
 import type { DynamicObject } from "../utils/types/object"
 import type { InfoValue } from "../utils/context/info"
-import BuyContent from "./BuyContent"
 
 type VideoCategory = DynamicObject<string, (VideoContent | DirectContent)[]>
 
@@ -52,8 +51,6 @@ const Home: FC = () => {
   const isVideoBuyed = useRef<DynamicObject<string, boolean>>({})
   const isDirectBuyed = useRef<DynamicObject<string, boolean>>({})
   const users = useRef<DynamicObject<string, UserInfo>>({})
-  const myPlaylist = useRef<VideoPlaylist[]>([])
-  const { user } = useClient()
   const [ Menu, dispatch ] = useReducer(reducer, Fragment)
   const [ info, setInfo ] = useState(null)
   const [ infoType, setInfoType  ] = useState(null)
@@ -123,11 +120,6 @@ const Home: FC = () => {
           categories.current[video.videoCategory].push(video)
         })
 
-        data.playlists.forEach((playlist) => {
-          if (playlist.userId === user?.userId)
-            myPlaylist.current.push(playlist)
-        })
-
         categories.current["Rediffusion"] = []
         data.rediffusion.forEach((rediff) => categories.current["Rediffusion"].push(rediff))
 
@@ -148,7 +140,6 @@ const Home: FC = () => {
     users: users.current,
     isVideoBuyed: isVideoBuyed.current,
     isDirectBuyed: isDirectBuyed.current,
-    myPlaylists: myPlaylist.current,
   }
 
   return (
@@ -157,7 +148,7 @@ const Home: FC = () => {
       {modal.uploadVideo.isOpen && <UploadVideo/>}
       {modal.programDirect.isOpen && <ProgramDirect/>}
       {modal.info.isOpen && <Info/>}
-      {modal.buy.isOpen && <BuyContent/>}
+      {modal.buyContent.isOpen && <BuyContent/>}
       <Navbar/>
       <Carousel/>
       <div className="pb-24">{video}</div>

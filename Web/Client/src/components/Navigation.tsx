@@ -4,12 +4,14 @@ import Home from "./Main/Home"
 import VideoPlayer from "./Player/VideoPlayer"
 import DirectPlayer from "./Player/DirectPlayer"
 import Error from "./assets/Error"
+import Profile from "./Profile/Profile"
 
 function Navigation() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<Home/>}/>
+        <Route path="/profile" element={<Profile/>}/>
         <Route path="watch-video/:videoId" element={<VideoPlayer/>}/>
         <Route path="watch-direct/:directId" element={<DirectPlayer/>}/>
         <Route path="*" element={<Error code={"404"}/>}/>

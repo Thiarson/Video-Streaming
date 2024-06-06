@@ -66,7 +66,7 @@ const BuyContent: FC = () => {
   const handleClose = () => {
     setCodeError(false)
     setBuyError(false)
-    dispatch(closeModal("buy"))
+    dispatch(closeModal("buyContent"))
   }
 
   const fieldsVerif = (...fields: (RefObject<HTMLInputElement> | null)[]) => {
@@ -130,7 +130,7 @@ const BuyContent: FC = () => {
         status !== "success" && setStatus("success")
         if (timeout.current === undefined) {
           timeout.current = setTimeout(() => {
-            dispatch(closeModal("buy"))
+            dispatch(closeModal("buyContent"))
             dispatch(closeModal("info"))
             window.location.reload()
           }, 3000);

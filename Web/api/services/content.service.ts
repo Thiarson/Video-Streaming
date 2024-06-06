@@ -213,7 +213,7 @@ contentService.uploadVideo = async (formData: [UploadFields, UploadFile]) => {
   // Il faut reverifier les données ici
 
   const videoPlaylist = await prisma.videoPlaylist.findUnique({
-    where: { playlistId: playlist[0] }
+    where: { playlistTitle: playlist[0] }
   })
 
   await prisma.videoContent.create({
@@ -227,7 +227,7 @@ contentService.uploadVideo = async (formData: [UploadFields, UploadFile]) => {
       videoThumbnail : thumbnail,
       videoUrl : videoUrl,
       videoDuration : duration[0],
-      videoPlaylist : videoPlaylist?.playlistId,
+      videoPlaylist : videoPlaylist?.playlistTitle,
     }
   })
 
@@ -426,6 +426,15 @@ contentService.assistDirect = async (directId: string, userId: string) => {
   await prisma.userInfo.update({
     where: { userId: userId },
     data: { userWallet: money.toString() }
+  })
+}
+
+/**
+ * Get user playlists
+ */
+contentService.userPlaylists = async (userId: string) => {
+  return await prisma.videoPlaylist.findMany({
+    where: { userId: userId }
   })
 }
 

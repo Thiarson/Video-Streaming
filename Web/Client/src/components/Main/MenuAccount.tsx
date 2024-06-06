@@ -22,7 +22,7 @@ const Account: FC = () => {
 
   const profil = () => {
     toggleMenu("none")
-    navigate("/profil")
+    navigate("/profile")
   }
 
   return (

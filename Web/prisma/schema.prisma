@@ -18,7 +18,7 @@ model UserInfo {
   userWallet           String          @default("0") @db.VarChar()
   userPassword         String          @db.VarChar()
   userRegistrationDate DateTime        @default(now())
-  userPhoto            String          @default("/data/default/profil/photo.jpg") @db.VarChar()
+  userPhoto            String          @default("/data/default/profile/photo.jpg") @db.VarChar()
   video                VideoContent[]
   direct               DirectContent[]
   videoPlaylist        VideoPlaylist[]
@@ -70,10 +70,9 @@ model RediffusionContent {
 }
 
 model VideoPlaylist {
-  playlistId          String   @id @unique @db.VarChar()
   user                UserInfo @relation(fields: [userId], references: [userId])
   userId              String   @db.VarChar()
-  playlistTitle       String   @db.VarChar()
+  playlistTitle       String   @id @unique @db.VarChar()
   playlistDescription String
   videoCount          Int      @default(0)
 }

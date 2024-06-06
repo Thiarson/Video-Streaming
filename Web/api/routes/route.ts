@@ -4,6 +4,7 @@ import type { Express } from "express"
 
 import authRouter from "./auth.route";
 import contentRouter from "./content.route";
+import profileRouter from "./profile.route";
 import streamRouter from "./stream.route";
 
 const src = path.dirname(__dirname)
@@ -11,11 +12,14 @@ const root = path.dirname(src)
 const server = path.join(root, 'server/public')
 
 module.exports = (app: Express) => {
-  // Endpoints for users
-  app.use("/api", authRouter)
+  // Endpoints for auth
+  app.use("/api/", authRouter)
 
   // Endpoint for content
   app.use("/api/", contentRouter)
+
+  // Endpoint for profile
+  app.use("/api/", profileRouter)
 
   // Endpoint for get the media content with homemade hls-server
   app.use("/streams/", streamRouter)
@@ -23,7 +27,7 @@ module.exports = (app: Express) => {
   // Endpoint when user image is requested
   app.get("/data/*", (req, res) => {
     try {
-      const format = [ ".jpg" ]
+      const format = [ ".jpg", ".png", ".jpeg" ]
       const extension = path.extname(req.url)
 
       if (format.indexOf(extension) === -1)

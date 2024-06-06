@@ -135,7 +135,7 @@ contentService.uploadVideo = async (formData) => {
     const impTemp = `./data/${userId}/videos/${videoId}/temp.jpg`;
     const thumbnail = `/data/${userId}/videos/${videoId}/${name}.jpg`;
     const videoPlaylist = await db_1.default.videoPlaylist.findUnique({
-        where: { playlistId: playlist[0] }
+        where: { playlistTitle: playlist[0] }
     });
     await db_1.default.videoContent.create({
         data: {
@@ -148,7 +148,7 @@ contentService.uploadVideo = async (formData) => {
             videoThumbnail: thumbnail,
             videoUrl: videoUrl,
             videoDuration: duration[0],
-            videoPlaylist: videoPlaylist?.playlistId,
+            videoPlaylist: videoPlaylist?.playlistTitle,
         }
     });
     await db_1.default.videoCheck.create({
@@ -289,6 +289,11 @@ contentService.assistDirect = async (directId, userId) => {
     await db_1.default.userInfo.update({
         where: { userId: userId },
         data: { userWallet: money.toString() }
+    });
+};
+contentService.userPlaylists = async (userId) => {
+    return await db_1.default.videoPlaylist.findMany({
+        where: { userId: userId }
     });
 };
 exports.default = contentService;

@@ -68,7 +68,7 @@ const Info: FC = () => {
   }
 
   const handleBuyVideo = () => {
-    dispatch(openModal("buy"))
+    dispatch(openModal("buyContent"))
   }
 
   const watch = () => {

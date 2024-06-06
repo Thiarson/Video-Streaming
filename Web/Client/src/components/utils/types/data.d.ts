@@ -1,4 +1,4 @@
-import { FC } from "react"
+import type { FC } from "react"
 
 export type Code = {
   code: number,
@@ -29,3 +29,5 @@ export type HomeMenuType = {
 export type HomeMenu = {
   [x in keyof HomeMenuType]: FC
 }
+
+export type Payement = "Mvola" | "Airtel Money" | "Orange Money"

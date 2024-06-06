@@ -1,7 +1,8 @@
-import { FormEvent, useRef, useState } from "react"
+import { FormEvent, useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useQuery } from "react-query"
 import { AiOutlineClose } from "react-icons/ai"
+import type { VideoPlaylist } from "@prisma/client"
 
 import Field from "../assets/Field"
 import Popup from "../assets/Popup"
@@ -13,8 +14,7 @@ import { directSpec, videoSpec } from "../utils/helpers/media-spec"
 import { useError } from "../utils/hooks/useError"
 import { closeModal } from "../utils/features/modal"
 import { useClient } from "../utils/context/client"
-import { useInfo } from "../utils/context/info"
-import { fetchPromise } from "../utils/fetch-server"
+import { fetchPromise, fetchServer } from "../utils/fetch-server"
 import type { FetchVoidResponse } from "../utils/types/fetch"
 import type { DynamicObject } from "../utils/types/object"
 
@@ -32,7 +32,7 @@ function UploadVideo() {
   const formData = useRef<FormData>(new FormData())
   const timeout = useRef<NodeJS.Timeout>()
   const { user } = useClient()
-  const { myPlaylists } = useInfo()
+  const [ myPlaylists, setMyPlaylists ] = useState<VideoPlaylist[]>([])
   const [ status, setStatus ] = useState<"idle" | "success" | "error">("idle")
   const { inputError, setInputError, resetInputError } = useError([ "playlist", "title", "description", "video", "price", "category", "duration" ])
 
@@ -112,7 +112,7 @@ function UploadVideo() {
       validPlaylist = true
     } else {
       myPlaylists.forEach((playlist) => {
-        if(selects.playlist.value === playlist.playlistId) {
+        if(selects.playlist.value === playlist.playlistTitle) {
           validPlaylist = true
           return
         }  
@@ -148,6 +148,18 @@ function UploadVideo() {
     formData.current = form
     query.refetch()
   }
+
+  useEffect(() => {
+    fetchServer.get("/api/user-playlists")
+      .then((response) => {
+        const { success, data: playlists } = response as { success: boolean, data: VideoPlaylist[] }
+        if (success)
+          setMyPlaylists(playlists)
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }, [])  
 
   if (query.isError)
     console.error(query.error);
@@ -194,7 +206,7 @@ function UploadVideo() {
               <div style={{ position: "relative" }}>
                 <select className="upload-video-playlist-option focus:outline-none focus:ring-0 peer" name="playlist" id="playlist" ref={playlist}>
                   <option value="">Aucune</option>
-                  {myPlaylists.map((playlist) => <option key={playlist.playlistId} value={playlist.playlistId}>{playlist.playlistTitle}</option>)}
+                  {myPlaylists.map((playlist) => <option key={playlist.playlistTitle} value={playlist.playlistTitle}>{playlist.playlistTitle}</option>)}
                 </select>
                 <label className="upload-video-playlist-label -translate-y-3 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75" htmlFor="playlist">Playlist</label>
               </div>

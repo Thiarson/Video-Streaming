@@ -73,7 +73,7 @@ const VideoCard: FC<Props> = ({ content, category: type, isBuyed }) => {
   const handleBuyVideo = () => {
     type === "Rediffusion" ? setType("direct") : setType("video")
     setVideo(content)
-    dispatch(openModal("buy"))
+    dispatch(openModal("buyContent"))
   }
   
   return (
