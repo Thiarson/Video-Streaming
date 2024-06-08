@@ -32,7 +32,7 @@ const format = (datetime: string) => {
   const hour = time[0]
   const min = time[1]
   
-  return `${day} ${month} ${year} à ${hour}h${min}`
+  return `${day} ${month} ${year} à ${hour}:${min}`
 }
 
 export { format }

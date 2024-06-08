@@ -118,4 +118,8 @@ profileService.profileModif = async (userId, photo, pseudo, bio) => {
     });
     return user;
 };
+profileService.otherProfile = async (userId, profileId) => {
+    const user = await db_1.default.userInfo.findUnique({ where: { userId: profileId } });
+    return user;
+};
 exports.default = profileService;

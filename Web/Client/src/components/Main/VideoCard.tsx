@@ -14,9 +14,10 @@ type Props = {
   content: VideoContent | DirectContent,
   category: string,
   isBuyed: boolean,
+  profile?: boolean,
 }
 
-const VideoCard: FC<Props> = ({ content, category: type, isBuyed }) => {
+const VideoCard: FC<Props> = ({ content, category: type, isBuyed, profile }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { setContent: setVideo, setType } = useInfo()
@@ -38,7 +39,7 @@ const VideoCard: FC<Props> = ({ content, category: type, isBuyed }) => {
     price.current = info.current.directPrice
 
     const descri = info.current.directDescription
-    description.current = descri.length < 110 ? descri : descri.substring(0, 110) + "..."
+    description.current = descri.length < 105 ? descri : descri.substring(0, 105) + "..."
 
     const temp = info.current.directDuration
     duration.current = directSpec.durations.filter((duration) => 
@@ -52,7 +53,7 @@ const VideoCard: FC<Props> = ({ content, category: type, isBuyed }) => {
     price.current = info.current.videoPrice
 
     const descri = info.current.videoDescription
-    description.current = descri.length < 110 ? descri : descri.substring(0, 110) + "..."
+    description.current = descri.length < 105 ? descri : descri.substring(0, 105) + "..."
 
     const temp = info.current.videoDuration
     duration.current = directSpec.durations.filter((duration) => 
@@ -89,9 +90,9 @@ const VideoCard: FC<Props> = ({ content, category: type, isBuyed }) => {
                 <div className={`cursor-pointer mb-1 w-6 h-6 text-black rounded-full flex justify-center items-center transition hover:bg-opacity-60 ${isBuyed ? 'bg-white' : 'bg-[#ffd62c]'}`}>
                   {isBuyed ? <BsFillPlayFill onClick={watch} size={20}/> : <BiSolidShoppingBag onClick={handleBuyVideo} size={15}/>}
                 </div>
-                <div className="cursor-pointer bg-zinc-600 text-white w-6 h-6 mb-1 border-zinc-600 border-2 rounded-full flex justify-center items-center transition hover:bg-zinc-400 hover:border-zinc-400" onClick={handleOpenInfo}>
+                {profile ?? <div className="cursor-pointer bg-zinc-600 text-white w-6 h-6 mb-1 border-zinc-600 border-2 rounded-full flex justify-center items-center transition hover:bg-zinc-400 hover:border-zinc-400" onClick={handleOpenInfo}>
                   <BsInfoLg size={15}/>
-                </div>
+                </div>}
               </div>
             </div>
           </div>

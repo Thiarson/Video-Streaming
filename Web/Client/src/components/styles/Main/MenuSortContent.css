@@ -6,17 +6,17 @@
   top: 60px;
   left: 160px;
   padding: 16px 0;
-  background-color: black;
-  border-width: 2px;
+  background-color: white;
+  border-width: 1px;
   border-radius: 8px;
-  border-color: rgb(31, 41 , 55);
+  border-color: black;
 }
 
 .menu-sort-box-container {
   display: flex;
   justify-content: center;
   gap: 40px;
-  color: rgb(161 161 170);
+  color: black;
   font-weight: 600;
 }
 

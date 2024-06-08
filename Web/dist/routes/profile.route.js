@@ -116,4 +116,25 @@ profileRouter.put("/profile-modif", auth_1.default, async function (req, res) {
         });
     }
 });
+profileRouter.get("/other-profile/:profileId", auth_1.default, async function (req, res) {
+    try {
+        const { data } = req.body;
+        const { profileId } = req.params;
+        const user = await profile_service_1.default.otherProfile(data, profileId);
+        res.json({
+            success: true,
+            data: user,
+        });
+    }
+    catch (e) {
+        if (e instanceof Error)
+            console.error(e.message);
+        else
+            console.error(`Unepected error: ${e}`);
+        res.json({
+            success: false,
+            data: null,
+        });
+    }
+});
 exports.default = profileRouter;

@@ -4,11 +4,11 @@ type Props = PropsWithChildren<{
   name: string,
   selected: string,
   select: Function,
+  other?: boolean,
 }>
 
-const ProfileItem: FC<Props> = ({ name, select, selected, children }) => {
-  // const selectedStyle = !other ? "text-red-600 bg-black bg-opacity-40 border-r-4 border-red-600" : "text-red-600 bg-black bg-opacity-40 border-l-4 border-red-600"
-  const selectedStyle = "text-white bg-black bg-opacity-80 border-r-4 border-red-600" 
+const ProfileItem: FC<Props> = ({ name, select, selected, children, other }) => {
+  const selectedStyle = other ? "text-white bg-black bg-opacity-80 border-l-4 border-red-600" : "text-white bg-black bg-opacity-80 border-r-4 border-red-600" 
 
   const handleSelect = () => {
     select(name)

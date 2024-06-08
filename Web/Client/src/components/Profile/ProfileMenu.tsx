@@ -20,7 +20,7 @@ type ProfileType = {
   Icon: IconType,
 }
 
-const ProfileMenu: FC = () => {
+const ProfileMenu: FC<{ other?: boolean }> = ({ other }) => {
   const navigate = useNavigate()
   const { setUser } = useClient()
   const { selected, select } = useProfile()
@@ -45,14 +45,14 @@ const ProfileMenu: FC = () => {
 
   return (
     <>
-      <div className="flex flex-col border-b-2 border-zinc-800 text-zinc-300 font-semibold py-2">
+      <div className={`flex flex-col text-zinc-300 font-semibold py-2 ${other ? "gap-2" : "border-b-2 border-zinc-800"}`}>
         {topProfileMenu.map(({ name, value, selected, select, Icon}) =>
-          <ProfileItem key={name} name={name} selected={selected} select={select}>
+          <ProfileItem key={name} name={name} selected={selected} select={select} other={other}>
             <Icon size={20}/>
             {value}
           </ProfileItem>)}
       </div>
-      <div className="flex flex-col py-2 text-zinc-300 font-semibold">
+      {other ?? <div className="flex flex-col py-2 text-zinc-300 font-semibold">
         {bottomProfileMenu.map(({ name, value, selected, select, Icon}) =>
           <ProfileItem key={name} name={name} selected={selected} select={select}>
             <Icon size={20}/>
@@ -62,7 +62,7 @@ const ProfileMenu: FC = () => {
           <GoSignOut size={20}/>
           Déconnexion
         </div>
-      </div>
+      </div>}
     </>
   )
 }

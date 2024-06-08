@@ -37,7 +37,6 @@ function App() {
   }
 
   const Component = user === null ? Authentication : Navigation
-  document.body.style.backgroundColor = user ? "rgb(212 212 216)" : "white"
 
   return (
     <ClientProvider value={{ user, setUser }}>

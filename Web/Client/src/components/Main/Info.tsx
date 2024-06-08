@@ -79,7 +79,7 @@ const Info: FC = () => {
 
   const otherProfil = () => {
     dispatch(closeModal("info"))
-    navigate(`/other-profil/${user.userId}`)
+    navigate(`/profile/${user.userId}`)
   }
 
   return (

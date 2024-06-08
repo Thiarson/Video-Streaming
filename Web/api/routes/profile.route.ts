@@ -143,4 +143,31 @@ profileRouter.put("/profile-modif", auth, async function (req, res) {
   }
 })
 
+/** 
+ * Route to get information and content of the specified user
+ */
+profileRouter.get("/other-profile/:profileId", auth, async function (req, res) {
+  try {
+    const { data } = req.body
+    const { profileId } = req.params    
+    
+    const user = await profileService.otherProfile(data, profileId)
+
+    res.json({
+      success: true,
+      data: user,
+    })
+  } catch (e) {
+    if (e instanceof Error)
+      console.error(e.message);
+    else
+      console.error(`Unepected error: ${e}`);
+    
+    res.json({ 
+      success: false,
+      data: null,
+    })
+  }
+})
+
 export default profileRouter

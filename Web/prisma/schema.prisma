@@ -14,7 +14,7 @@ model UserInfo {
   userSex              String          @db.Char()
   userPhone            String          @unique @db.VarChar()
   userEmail            String          @unique @db.VarChar()
-  userBio              String?         @db.VarChar()
+  userBio              String?         @default("Ma courte biographie...") @db.VarChar()
   userWallet           String          @default("0") @db.VarChar()
   userPassword         String          @db.VarChar()
   userRegistrationDate DateTime        @default(now())

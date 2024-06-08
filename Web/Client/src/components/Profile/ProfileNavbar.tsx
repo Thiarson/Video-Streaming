@@ -10,9 +10,13 @@ import { FiBell } from "react-icons/fi"
 import type { FC } from "react"
 
 import { openModal } from "../utils/features/modal"
+import { RiVideoAddLine } from "react-icons/ri"
+import { baseURL } from "../utils/fetch-server"
+import { useClient } from "../utils/context/client"
 
-const ProfileNavbar: FC = () => {
+const ProfileNavbar: FC<{ other?: boolean }> = ({ other }) => {
   const dispatch = useDispatch()
+  const { user } = useClient()
 
   const uploadVideo = () => {
     dispatch(openModal("uploadVideo"))
@@ -28,6 +32,14 @@ const ProfileNavbar: FC = () => {
 
   const addMoney = () => {
     dispatch(openModal("addMoney"))
+  }
+
+  const toggleCreateContent = () => {
+
+  }
+
+  const toggleAccountMenu = () => {
+    
   }
 
   return (
@@ -48,6 +60,19 @@ const ProfileNavbar: FC = () => {
           </div>
           <input className="bg-[#303030] rounded-3xl outline-none text-white px-5 " type="text" placeholder="Recherche"/>
         </div>
+        {other ?
+        <div className="navbar-third-container">
+          <div className="navbar-create-box hover:bg-[#303030]" onClick={toggleCreateContent}>
+            <RiVideoAddLine size={22}/>
+          </div>
+          <div className="navbar-notification-box hover:bg-[#303030]" onClick={undefined}>
+            <FiBell size={22}/>
+          </div>
+          <div className="navbar-profil-box" onClick={toggleAccountMenu}>
+            <img className="navbar-profil-image" src={baseURL+user?.userPhoto} alt="Profil"/>
+          </div>
+          {/* <Menu/> */}
+        </div> :
         <div className="flex gap-2">
           <div onClick={uploadVideo} className="flex justify-center items-center h-10 w-10 rounded-full hover:bg-[#303030] text-white cursor-pointer">
             <BiUpload size={25}/>
@@ -62,9 +87,9 @@ const ProfileNavbar: FC = () => {
             <MdAttachMoney size={22}/>
           </div>
           <div className="flex justify-center items-center h-10 w-10 rounded-full hover:bg-[#303030] text-white cursor-pointer">
-          <FiBell size={22}/>
-        </div>
-        </div>
+            <FiBell size={22}/>
+          </div>
+        </div>}
       </div>
     </nav>
   )

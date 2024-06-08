@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useQuery } from "react-query"
 import type { FC, Reducer } from "react"
-import type { VideoPlaylist, VideoContent } from "@prisma/client"
+import type { VideoPlaylist, VideoContent, DirectContent } from "@prisma/client"
 
 import ProfileNavbar from "./ProfileNavbar"
 import UploadVideo from "../Main/UploadVideo"
@@ -40,13 +40,15 @@ const reducer: Reducer<string, keyof typeof options> = (state, type) => {
 }
 
 const Profile: FC = () => {
-  const { user } = useClient()
-  const [ selected, select ] = useReducer(reducer, "playlist")
   const dispatch = useDispatch()
   const modal = useSelector((store: RootState) => store.modal)
+  const { user } = useClient()
+  const [ selected, select ] = useReducer(reducer, "playlist")
+  const direct = useRef<DirectContent[]>([])
   const playlists = useRef<DynamicObject<string, VideoPlaylist>>({})
   const playlistsVideos = useRef<DynamicObject<string, VideoContent[]>>({})
-
+  const categoriesVideos = useRef<DynamicObject<string, (VideoContent | DirectContent)[]>>({})
+  
   const queryKey = ["profile-content"]
   const query = useQuery(queryKey, () => {
     return fetchServer.get("/api/profile-content")
@@ -57,10 +59,7 @@ const Profile: FC = () => {
   }
 
   useEffect(() => {
-    document.body.style.backgroundColor = "white"
     query.refetch()
-
-    return () => { document.body.style.backgroundColor = "rgb(212 212 216)" }
   }, [])
 
   if (query.isError)
@@ -74,6 +73,21 @@ const Profile: FC = () => {
       // responseSchema.parse(response)
       
       if (success && data) {
+        const videoByCategory: DynamicObject<string, (VideoContent | DirectContent)[]> = {}
+        data.videos.forEach((video) => {
+          if (!videoByCategory[video.videoCategory])
+            videoByCategory[video.videoCategory] = []
+
+          videoByCategory[video.videoCategory].push(video)
+        })
+        videoByCategory["Rediffusion"] = []
+        data.rediffusion.forEach((video) => {
+          videoByCategory["Rediffusion"].push(video)
+        })
+        categoriesVideos.current = videoByCategory
+
+        direct.current = data.direct
+
         const videoWithPlaylist: DynamicObject<string, VideoContent[]> = {}
         data.videos.forEach((video) => {
           if (video.videoPlaylist) {
@@ -100,9 +114,9 @@ const Profile: FC = () => {
   if (selected === "playlist")
     show = <ShowPlaylists videos={playlistsVideos.current} playlists={playlists.current}/>
   else if (selected === "video")
-    show = <ShowVideos/>
+    show = <ShowVideos videos={categoriesVideos.current}/>
   else if (selected === "direct")
-    show = <ShowDirect/>
+    show = <ShowDirect direct={direct.current}/>
   else if (selected === "buyed")
     show = <ShowBuyed/>
   else if (selected === "assisted")

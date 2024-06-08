@@ -173,4 +173,13 @@ profileService.profileModif = async (userId: string, photo: string, pseudo: stri
   return user
 }
 
+/**
+ * Get information and content of the specified user
+ */
+profileService.otherProfile = async (userId: string, profileId: string) => {
+  const user = await prisma.userInfo.findUnique({ where: { userId: profileId }})
+
+  return user
+}
+
 export default profileService

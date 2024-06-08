@@ -7,10 +7,10 @@
   right: 8px;
   padding-top: 8px;
   padding-bottom: 16px;
-  background-color: black;
-  border-width: 2px;
+  background-color: white;
+  border-width: 1px;
   border-radius: 8px;
-  border-color: rgb(31, 41 , 55);
+  border-color: black;
 }
 
 .menu-account-box-container {
@@ -35,7 +35,7 @@
 }
 
 .menu-account-profil-paragraph {
-  color: rgb(161 161 170);
+  color: black;
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;  
@@ -44,7 +44,7 @@
 .menu-account-hr {
   border-width: 0;
   height: 1px;
-  background-color: rgb(75, 85, 99);
+  background-color: black;
 }
 
 .menu-account-second-box {
@@ -53,7 +53,7 @@
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  color: rgb(161, 161, 170);
+  color: black;
   padding: 0 12px;
   cursor: pointer;
 }

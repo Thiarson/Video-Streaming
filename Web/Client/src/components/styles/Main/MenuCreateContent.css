@@ -6,10 +6,10 @@
   top: 60px;
   right: 144px;
   padding: 16px 0;
-  background-color: black;
-  border-width: 2px;
+  background-color: white;
+  border-width: 1px;
   border-radius: 8px;
-  border-color: rgb(31, 41 , 55);
+  border-color: black;
 }
 
 .menu-create-box-container {
@@ -22,7 +22,7 @@
   display: flex;
   gap: 12px;
   padding: 0 12px;
-  color: rgb(161 161 170);
+  color: black;
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;

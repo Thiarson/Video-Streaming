@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import Home from "./Main/Home"
+import Profile from "./Profile/Profile"
+import OtherProfile from "./Profile/OtherProfile"
 import VideoPlayer from "./Player/VideoPlayer"
 import DirectPlayer from "./Player/DirectPlayer"
 import Error from "./assets/Error"
-import Profile from "./Profile/Profile"
 
 function Navigation() {
   return (
@@ -12,6 +13,7 @@ function Navigation() {
       <Routes>
         <Route path="/home" element={<Home/>}/>
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/profile/:userId" element={<OtherProfile/>}/>
         <Route path="watch-video/:videoId" element={<VideoPlayer/>}/>
         <Route path="watch-direct/:directId" element={<DirectPlayer/>}/>
         <Route path="*" element={<Error code={"404"}/>}/>
