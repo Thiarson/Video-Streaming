@@ -2,6 +2,7 @@
   - Web server
   - RTMP server
   - UI with React and Typescript
+  - Migrate Server to Typescript
 
 #TO DO
   - Notifications
@@ -10,7 +11,6 @@
   - Admin
   - Chat
   - Server Side Rendering
-  - Migrate Server to Typescript
   - Mobile app
   - 3D
   - DevOps
